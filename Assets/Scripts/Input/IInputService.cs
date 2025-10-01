@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Game.Core
+namespace Game.Input
 {
-    public class SimpleContainer : MonoBehaviour
+    public class IInputService : MonoBehaviour
     {
         // Start is called before the first frame update
         void Start()

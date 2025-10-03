@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using UnityEngine;
 
 namespace Game.Input.Commands
-    internal class MovementCommand
+{
+    public class MovementCommand : InputCommand
     {
+        public Vector2 Direction { get; }
+        public MovementCommand(Vector2 dir, float ts) : base(ts) => Direction = dir;
     }
 }

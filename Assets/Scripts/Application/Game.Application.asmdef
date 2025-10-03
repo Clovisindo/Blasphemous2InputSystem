@@ -1,11 +1,11 @@
 {
-    "name": "Game.Domain",
+    "name": "Game.Application",
     "rootNamespace": "",
     "references": [
         "GUID:eae89194f93d0bf408c6d1c647afde06",
-        "GUID:9e0005094d027ef448ee339fc640d3df",
-        "GUID:0bb8141eb11aca54ab4fb0c7480e6cad",
-        "GUID:465a2375429c6894bb807c572d1392ab"
+        "GUID:eff35eb1a4a2796409e3ce5f4eee8f81",
+        "GUID:93038ba45ca64ba4698d067eda634ce4",
+        "GUID:0bb8141eb11aca54ab4fb0c7480e6cad"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

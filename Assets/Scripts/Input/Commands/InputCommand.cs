@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Game.Input.Commands
+﻿namespace Game.Input.Commands
 {
-    internal class InputCommand
+    public abstract class InputCommand
     {
+        public readonly float Timestamp;
+        protected InputCommand(float timestamp) => Timestamp = timestamp;
     }
 }

@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Game.Input.Commands;
 
 namespace Game.Domain.StateMachine
 {
-    internal class IPlayerState
+    public interface IPlayerState
     {
+        void Enter();
+        void Exit();
+        void HandleCommand(InputCommand cmd);
+        void Update(float dt);
     }
 }

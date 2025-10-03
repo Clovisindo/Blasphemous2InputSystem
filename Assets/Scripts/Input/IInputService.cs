@@ -1,21 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using Game.Input.Commands;
 
 namespace Game.Input
 {
-    public class IInputService : MonoBehaviour
+    public interface IInputService 
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
+        void Initialize();
+        bool TryDequeue(out InputCommand command);
+        void Enqueue(InputCommand command);
     }
 }

@@ -1,7 +1,10 @@
 {
     "name": "Game.Tests.EditMode",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:eae89194f93d0bf408c6d1c647afde06",
+        "GUID:465a2375429c6894bb807c572d1392ab"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

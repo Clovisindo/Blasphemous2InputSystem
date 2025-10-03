@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using System;
 
 namespace Game.Core
 {
-    public class IContainer
+    public interface IContainer
     {
-
+        void RegisterSingleton<TService>(TService instance);
+        void RegisterTransient<TService>(Func<TService> factory);
+        TService Resolve<TService>();
+        bool TryResolve<TService>(out TService service);
     }
 }

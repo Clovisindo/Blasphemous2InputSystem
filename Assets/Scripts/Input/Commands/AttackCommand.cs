@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using static Utilities;
 
 namespace Game.Input.Commands
 {
-    internal class AttackCommand
+   
+    public class AttackCommand : InputCommand
     {
+        public AttackType Type { get; }
+        public AttackCommand(AttackType t, float ts) : base(ts) => Type = t;
     }
 }

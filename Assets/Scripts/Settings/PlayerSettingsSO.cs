@@ -1,18 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerSettingsSO : MonoBehaviour
+namespace Game.Settings
 {
-    // Start is called before the first frame update
-    void Start()
+    [CreateAssetMenu (menuName ="Game/PlayerSettings")]
+    public class PlayerSettingsSO : ScriptableObject
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public float moveSpeed = 5f;
+        public float jumpForce = 5f;
+        public AttackDataSO[] attacks;
     }
 }

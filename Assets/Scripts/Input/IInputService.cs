@@ -7,5 +7,7 @@ namespace Game.Input
         void Initialize();
         bool TryDequeue(out InputCommand command);
         void Enqueue(InputCommand command);
+        //Vector2 GetCurrentMovement();
+        void SetStrategy(IInputStrategy strategy);
     }
 }

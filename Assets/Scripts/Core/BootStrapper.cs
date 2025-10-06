@@ -18,6 +18,8 @@ namespace Game.Core
         {
             Container = new SimpleContainer();
 
+           
+
             // EventBus
             var eventBus = new EventBus();
             Container.RegisterSingleton<IEventBus>(eventBus);
@@ -25,10 +27,20 @@ namespace Game.Core
             // Register settings
             Container.RegisterSingleton<PlayerSettingsSO>(playerSettings);
 
-            //Input service(se registra instancia)
-            var inputSvc = new UnityInputService(inputActionsAsset, eventBus);
-            inputSvc.Initialize(); // habilita el Input System
-            Container.RegisterSingleton<IInputService>(inputSvc);
+            // Input adapter y Strategy
+            var adapter = new InputAdapter(inputActionsAsset);
+            Container.RegisterSingleton<InputAdapter>(adapter);
+            Container.RegisterSingleton<IInputService>(adapter);
+
+            // Crear estrategias y setear una por defecto
+            var keyboardStrategy = new KeyboardInputStrategy();
+            var gamepadStrategy = new GamepadInputStrategy();
+            adapter.SetStrategy(keyboardStrategy); // o gamepadStrategy
+
+            ////Input service(se registra instancia)
+            //var inputSvc = new UnityInputService(inputActionsAsset, eventBus);
+            //inputSvc.Initialize(); // habilita el Input System
+            //Container.RegisterSingleton<IInputService>(inputSvc);
 
             // Otros registros: PlayerStateMachine, InputBuffer...
             Container.RegisterSingleton<InputBuffer>(new InputBuffer(maxSize: 12, windowTime: 0.6f));

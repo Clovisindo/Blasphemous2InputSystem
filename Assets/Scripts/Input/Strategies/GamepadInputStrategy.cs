@@ -1,0 +1,74 @@
+﻿using Game.Input.Commands;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
+using static Utilities;
+
+namespace Game.Input
+{
+    public class GamepadInputStrategy : IInputStrategy
+    {
+        PlayerInputActions _actions;
+        readonly Queue<InputCommand> _attackQueue = new();
+
+        public void Initialize(PlayerInputActions actions)
+        {
+            _actions = actions ?? throw new ArgumentNullException(nameof(actions));
+            //_actions.Gameplay.Movement.performed += OnMovementPerformed;
+            //_actions.Gameplay.Movement.canceled += OnMovementCanceled;
+            _actions.Gameplay.Attack.performed += OnAttackPerformed;
+
+            _actions.Enable();
+        }
+
+        public List<InputCommand> Poll(float deltaTime)
+        {
+            var outlist = new List<InputCommand>();
+
+            var v = _actions.Gameplay.Movement.ReadValue<Vector2>();
+
+            if(v.sqrMagnitude > 0.001f)
+                outlist.Add(new MovementCommand(v,Time.unscaledDeltaTime));
+            else
+                outlist.Add(new MovementCommand(Vector2.zero, Time.unscaledDeltaTime));
+
+            if (_attackQueue.Count > 0)
+            {
+                while (_attackQueue.Count > 0) outlist.Add(_attackQueue.Dequeue());
+            }
+
+            return outlist;
+        }
+
+        //void OnMovementPerformed(InputAction.CallbackContext ctx)
+        //{
+        //    _currentMovement = ctx.ReadValue<Vector2>();
+        //    _movementDirty = true;
+        //}
+
+        //void OnMovementCanceled(InputAction.CallbackContext ctx)
+        //{
+        //    _currentMovement = Vector2.zero;
+        //    _movementDirty = true;
+        //}
+
+        void OnAttackPerformed(InputAction.CallbackContext ctx)
+        {
+            var type = ctx.interaction is HoldInteraction ? AttackType.Heavy : AttackType.Light;
+            _attackQueue.Enqueue(new AttackCommand(type, Time.unscaledTime));
+        }
+
+        public void ShutDown()
+        {
+            if (_actions != null)
+            {
+                //_actions.Gameplay.Movement.performed -= OnMovementPerformed;
+                //_actions.Gameplay.Movement.canceled -= OnMovementCanceled;
+                _actions.Gameplay.Attack.performed -= OnAttackPerformed;
+                _actions.Disable();
+            }
+        }
+    }
+}

@@ -13,6 +13,8 @@ namespace Game.Input
         PlayerInputActions _actions;
         readonly IEventBus _eventBus;
 
+        Vector2 _currentMovement = Vector2.zero;
+
         public UnityInputService(PlayerInputActions actionsAsset, IEventBus eventBus)
         {
             _eventBus = eventBus;
@@ -22,8 +24,10 @@ namespace Game.Input
             {
                 var val = ctx.ReadValue<Vector2>();
                 Debug.Log($"Movement input: {val}");
-                Enqueue(new MovementCommand(val, Time.unscaledDeltaTime));
+                _currentMovement = ctx.ReadValue<Vector2>();
             };
+
+            _actions.Gameplay.Movement.canceled += ctx => _currentMovement = Vector2.zero;
 
             _actions.Gameplay.Attack.performed += ctx =>
             {
@@ -49,6 +53,13 @@ namespace Game.Input
             }
             command = null;
             return false;
+        }
+
+        public Vector2 GetCurrentMovement() => _currentMovement;
+
+        public void SetStrategy(IInputStrategy strategy)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

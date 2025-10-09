@@ -17,6 +17,8 @@ namespace Game.Input
             _recordedCommands = recorded;
         }
 
+        public InputDeviceType DeviceType => throw new NotImplementedException();
+
         public void Initialize(PlayerInputActions actionsAsset)
         {
             _startTime = Time.unscaledTime;

@@ -9,8 +9,14 @@ namespace Game.Input
 
         private void Awake()
         {
+            Bootstrapper.OnCoreInitialized += OnCoreReady;
+        }
+
+        private void OnCoreReady(PlayerInputActions actions)
+        {
             Adapter = Bootstrapper.Container.Resolve<InputAdapter>();
-            Adapter.Initialize();
+            //Adapter.Initialize(actions);
+            Bootstrapper.OnCoreInitialized -= OnCoreReady;
         }
 
         private void Update()

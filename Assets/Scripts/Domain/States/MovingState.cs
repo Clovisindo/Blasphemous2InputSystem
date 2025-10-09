@@ -32,7 +32,7 @@ namespace Game.Domain.StateMachine
         {
             if ( cmd is MovementCommand move)
             {
-                Debug.Log($"MovementCommand vector move : {move.Direction}");
+                //Debug.Log($"MovementCommand vector move : {move.Direction}");
                 _lastInput = move.Direction;
                 if(_lastInput.sqrMagnitude < 0.01f)
                     _stateMachine.ChangeState<IdleState>();

@@ -5,6 +5,7 @@ namespace Game.Input
 { 
     public interface IInputStrategy
     {
+        InputDeviceType DeviceType { get; }
         // Arranca la estrategia (binding al InputActionAsset, listeners, etc.)
         void Initialize(PlayerInputActions actionsAsset);
 

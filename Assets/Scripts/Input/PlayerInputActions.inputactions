@@ -51,7 +51,7 @@
                     "name": "Keyboard",
                     "id": "c21b08ab-efc1-40a4-a7cd-83bca307b581",
                     "path": "2DVector(mode=2)",
-                    "interactions": "Hold",
+                    "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Movement",

@@ -4,10 +4,9 @@ namespace Game.Input
 {
     public interface IInputService 
     {
-        void Initialize();
+        void Initialize(PlayerInputActions actions);
         bool TryDequeue(out InputCommand command);
         void Enqueue(InputCommand command);
-        //Vector2 GetCurrentMovement();
         void SetStrategy(IInputStrategy strategy);
     }
 }

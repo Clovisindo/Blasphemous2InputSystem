@@ -18,7 +18,6 @@ namespace Game.Application
 
         // Opcional: evitar encolar idéntico movimiento cada frame
         Vector2 _lastEnqueuedMovement = Vector2.zero;
-        float _lastEnqueueTime = 0f;
         [Tooltip("Si true: solo encola movimiento si cambia o ha pasado el intervalo")]
         public bool optimizeMovementEnqueue = true;
         public float movementEnqueueInterval = 1f / 60f; // en segundos (p. ej. 60 Hz)

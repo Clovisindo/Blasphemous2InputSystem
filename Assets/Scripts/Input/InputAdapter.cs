@@ -2,14 +2,14 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Game.Input
 {
     public enum InputDeviceType
     {
         KeyboardMouse,
-        Gamepad
+        Gamepad,
+        Unknown
     }
 
     public class InputAdapter : IInputService
@@ -17,22 +17,29 @@ namespace Game.Input
         readonly Queue<InputCommand> _queue = new();
         IInputStrategy _strategy;
         PlayerInputActions _actionsAsset;
-
         private readonly IInputStrategy _keyboardStrategy;
         private readonly IInputStrategy _gamepadStrategy;
-        private string _currentDeviceLayout = "Keyboard";
-        private float _lastSwitchTime;
-        private const float DEVICE_SWITCH_COOLDOWN = 0.25f; // segundos
-        public event Action<string> OnDeviceChanged; // "Keyboard", "Gamepad"
+        /// <summary>
+        /// solo bandera en evento cambiar dispositivo
+        /// </summary>
+        private IInputStrategy _currentStrategy;
+        private readonly InputDeviceWatcher _watcher;
 
+        public InputDeviceType CurrentDeviceType { get; private set; }
 
         public InputAdapter(IInputStrategy keyboardStrategy, IInputStrategy gamepadStrategy)
         {
             _keyboardStrategy = keyboardStrategy;
             _gamepadStrategy = gamepadStrategy;
+
+            _currentStrategy = _keyboardStrategy;
+            CurrentDeviceType = InputDeviceType.KeyboardMouse;
+
+            _watcher = new InputDeviceWatcher();
+            _watcher.OnDeviceChanged += OnDeviceChanged;
         }
 
-
+     
         public void Initialize(PlayerInputActions actionsAsset) 
         {
             _actionsAsset = actionsAsset ?? throw new ArgumentNullException(nameof(actionsAsset));
@@ -40,11 +47,8 @@ namespace Game.Input
             SetStrategy(_keyboardStrategy);//por defecto
         }
 
-
         public void Update(float deltaTime)
         {
-            DetectDeviceChange();
-
             if (_strategy == null) return;
             var cmds = _strategy.Poll(deltaTime);
             if (cmds != null)
@@ -53,49 +57,6 @@ namespace Game.Input
                     _queue.Enqueue(c);
             }
         }
-
-        private void DetectDeviceChange()
-        {
-            var lastDevice = InputSystem.GetDevice<Keyboard>()?.wasUpdatedThisFrame == true
-                ? "Keyboard"
-                : InputSystem.GetDevice<Gamepad>()?.wasUpdatedThisFrame == true
-                    ? "Gamepad"
-                    : _currentDeviceLayout;
-
-            if (lastDevice != _currentDeviceLayout &&
-                Time.unscaledTime - _lastSwitchTime > DEVICE_SWITCH_COOLDOWN)
-            {
-                _lastSwitchTime = Time.unscaledTime;
-                _currentDeviceLayout = lastDevice;
-                OnDeviceChanged?.Invoke(lastDevice);
-                SetStrategy(lastDevice == "Gamepad" ? _gamepadStrategy : _keyboardStrategy);
-            }
-        }
-
-        //private void OnAnyInputPerformed(InputAction.CallbackContext ctx)
-        //{
-        //    var layout = ctx.control.device.layout;
-
-        //    var newDevice = layout.Contains("XInputControllerWindows") ? "XInputControllerWindows" : "Keyboard";
-
-        //    if (Time.unscaledTime - _lastSwitchTime < DEVICE_SWITCH_COOLDOWN)
-        //        return;
-
-        //    if (newDevice == "XInputControllerWindows" && ctx.control is StickControl stick)
-        //    {
-        //        if (stick.ReadValue().sqrMagnitude < 0.01f)
-        //            return; 
-        //    }
-
-        //    if (newDevice != _currentDeviceLayout)
-        //    {
-        //        _currentDeviceLayout = newDevice;
-        //        _lastSwitchTime = Time.unscaledTime;
-        //        SetStrategy(newDevice == "XInputControllerWindows" ? _gamepadStrategy : _keyboardStrategy);
-        //        OnDeviceChanged?.Invoke(_currentDeviceLayout);
-        //    }
-
-        //}
 
         public void SetStrategy(IInputStrategy strategy)
         {
@@ -107,7 +68,6 @@ namespace Game.Input
             Debug.Log($"[InputAdapter] Cambiado a estrategia: {_strategy.GetType().Name}");
 
         }
-
 
         public bool TryDequeue(out InputCommand command)
         {
@@ -122,6 +82,24 @@ namespace Game.Input
         {
             _strategy?.ShutDown();
             _queue.Clear();
+            _watcher.Dispose();
         }
+
+        private void OnDeviceChanged(InputDeviceType newType)
+        {
+            IInputStrategy newStrategy = newType switch
+            {
+                InputDeviceType.Gamepad => _gamepadStrategy,
+                InputDeviceType.KeyboardMouse => _keyboardStrategy,
+                _ => _keyboardStrategy
+            };
+
+            if (_currentStrategy == newStrategy) return;
+
+            _currentStrategy = newStrategy;
+            SetStrategy(newStrategy);
+            CurrentDeviceType = newType;
+        }
+
     }
 }

@@ -10,11 +10,15 @@ namespace Game.Input
 {
     public class KeyboardInputStrategy : IInputStrategy
     {
-        public InputDeviceType DeviceType => InputDeviceType.KeyboardMouse;
+        private readonly Func<InputDevice, bool> _deviceFilter = device => device is Keyboard;
+        readonly Queue<InputCommand> _attackQueue = new();
         PlayerInputActions _actions;
         Vector2 _currentMovement = Vector2.zero;
+        /// <summary>
+        /// flag para marcar que el movimiento ha cambiado desde el ultimo poll() cuando se para el movimiento al soltar teclas
+        /// </summary>
         bool _movementDirty = false;
-        readonly Queue<InputCommand> _attackQueue = new();
+        public InputDeviceType DeviceType => InputDeviceType.KeyboardMouse;
 
         public void Initialize(PlayerInputActions actionsAsset)
         {
@@ -22,12 +26,6 @@ namespace Game.Input
 
             _actions.Gameplay.Movement.performed += OnMovementPerformed;
             _actions.Gameplay.Movement.canceled += OnMovementCanceled;
-            _actions.Gameplay.Movement.performed += ctx =>
-            {
-                var value = ctx.ReadValue<Vector2>();
-                Debug.Log($"[Movement] device={ctx.control.device.displayName}, value={value}");
-            };
-
             _actions.Gameplay.Attack.performed += OnAttackPerformed;
 
             _actions.Enable();
@@ -68,24 +66,21 @@ namespace Game.Input
 
         void OnMovementPerformed(InputAction.CallbackContext ctx)
         {
-            if (ctx.control.device is not Keyboard)
-                return;
+            if (!_deviceFilter(ctx.control.device)) return;
             _currentMovement = ctx.ReadValue<Vector2>();
             _movementDirty = true;
         }
 
         void OnMovementCanceled(InputAction.CallbackContext ctx)
         {
-            if (ctx.control.device is not Keyboard)
-                return;
+            if (!_deviceFilter(ctx.control.device)) return;
             _currentMovement = Vector2.zero;
             _movementDirty = true;
         }
 
         void OnAttackPerformed(InputAction.CallbackContext ctx)
         {
-            if (ctx.control.device is not Keyboard)
-                return;
+            if (!_deviceFilter(ctx.control.device)) return;
             var type = ctx.interaction is HoldInteraction ? AttackType.Heavy : AttackType.Light;
             _attackQueue.Enqueue(new AttackCommand(type, Time.unscaledTime));
         }

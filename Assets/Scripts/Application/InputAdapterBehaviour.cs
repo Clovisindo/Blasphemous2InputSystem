@@ -15,7 +15,6 @@ namespace Game.Input
         private void OnCoreReady(PlayerInputActions actions)
         {
             Adapter = Bootstrapper.Container.Resolve<InputAdapter>();
-            //Adapter.Initialize(actions);
             Bootstrapper.OnCoreInitialized -= OnCoreReady;
         }
 

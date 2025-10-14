@@ -44,55 +44,11 @@ namespace Game.Application
             }
 
             // 2) Movimiento continuo: leer estado cacheado y generar MovementCommand por frame
-            //CheckMovement();
-
             _stateMachine.Update(Time.deltaTime);
 
             var combo = _buffer.DetectCombo();
             if (combo != ComboType.None) _stateMachine.ExecuteCombo(combo);
         }
-        // ToDo: no me gusta usar el unscaledTime ni que esta logica esté en el playerController, repasar posible cambio
-        private void CheckMovement()
-        {
-            //var movement = _input.GetCurrentMovement();
-
-            //if (movement.sqrMagnitude > 0.0001f)
-            //{
-            //    bool shouldEnqueue = true;
-            //    if (optimizeMovementEnqueue)
-            //    {
-            //        var now = Time.unscaledTime;
-            //        // encolar solo si el movimiento cambió o ha pasado el intervalo
-            //        if ((movement - _lastEnqueuedMovement).sqrMagnitude < 0.0001f && (now - _lastEnqueueTime) < movementEnqueueInterval)
-            //        {
-            //            shouldEnqueue = false;
-            //        }
-            //        else
-            //        {
-            //            _lastEnqueuedMovement = movement;
-            //            _lastEnqueueTime = now;
-            //        }
-            //    }
-
-            //    if (shouldEnqueue)
-            //    {
-            //        var moveCmd = new MovementCommand(movement, Time.unscaledTime);
-            //        _buffer.AddCommand(moveCmd);
-            //        _stateMachine.ProcessCommand(moveCmd);
-            //    }
-            //}
-            //else
-            //{
-            //    // Si antes se movía y ahora no, avisar al state machine con un MovementCommand(0)
-            //    if (_lastEnqueuedMovement.sqrMagnitude > 0.0001f)
-            //    {
-            //        var zeroCmd = new MovementCommand(Vector2.zero, Time.unscaledTime);
-            //        _stateMachine.ProcessCommand(zeroCmd);
-            //        _lastEnqueuedMovement = Vector2.zero;
-            //    }
-            //}
-        }
-
         void OnMove(PlayerMoveEvent ev)
         {
             transform.position += (Vector3)ev.MovementDelta;

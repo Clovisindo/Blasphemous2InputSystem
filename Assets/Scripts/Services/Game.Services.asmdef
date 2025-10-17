@@ -1,13 +1,9 @@
 {
-    "name": "Game.Core",
+    "name": "Game.Services",
     "rootNamespace": "",
     "references": [
-        "GUID:9e0005094d027ef448ee339fc640d3df",
-        "GUID:75469ad4d38634e559750d17036d5f7c",
         "GUID:eae89194f93d0bf408c6d1c647afde06",
-        "GUID:0bb8141eb11aca54ab4fb0c7480e6cad",
-        "GUID:eff35eb1a4a2796409e3ce5f4eee8f81",
-        "GUID:03a4a0947ce0e334e8506fc774337684"
+        "GUID:eff35eb1a4a2796409e3ce5f4eee8f81"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

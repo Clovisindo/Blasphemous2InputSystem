@@ -1,4 +1,5 @@
-﻿using Game.Events;
+﻿using Game.Domain.Entities;
+using Game.Events;
 using Game.Input.Commands;
 using Game.Settings;
 using System;
@@ -8,15 +9,13 @@ namespace Game.Domain.StateMachine
 {
     public class IdleState : IPlayerState
     {
+        readonly PlayerEntity _playerEntity;
         readonly PlayerStateMachine _stateMachine;
-        readonly PlayerSettingsSO _settings;
-        readonly IEventBus _eventBus;
 
-        public IdleState(PlayerStateMachine stateMachine,PlayerSettingsSO settings, IEventBus eventBus)
+        public IdleState(PlayerEntity playerEntity, PlayerStateMachine stateMachine)
         {
+            _playerEntity = playerEntity;
             _stateMachine = stateMachine;
-            _settings = settings;
-            _eventBus = eventBus;
         }
         public void Enter()
         {
@@ -35,7 +34,6 @@ namespace Game.Domain.StateMachine
             else if (cmd is AttackCommand atk)
             {
                 _stateMachine.ChangeState<AttackingState>();
-                _eventBus.Publish(new PlayerAttackEvent{ Type = atk.Type });
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Game.Events;
+﻿using Game.Domain.Entities;
+using Game.Events;
 using Game.Input;
 using Game.Input.Commands;
 using Game.Settings;
@@ -10,13 +11,15 @@ namespace Game.Domain.StateMachine
     public class PlayerStateMachine
     {
         readonly Dictionary<Type, IPlayerState> _states = new();
+        readonly PlayerEntity _playerEntity;
         IPlayerState _current;
 
-        public PlayerStateMachine(PlayerSettingsSO settings,IEventBus eventBus)
+        public PlayerStateMachine(PlayerEntity playerEntity,IEventBus eventBus)
         {
-            _states[typeof(IdleState)] = new IdleState(this,settings,eventBus);
-            _states[typeof(MovingState)] = new MovingState(this, settings, eventBus);
-            _states[typeof(AttackingState)] = new AttackingState(this, settings, eventBus);
+            _playerEntity = playerEntity;
+            _states[typeof(IdleState)] = new IdleState(playerEntity, this);
+            _states[typeof(MovingState)] = new MovingState(playerEntity, this, eventBus);
+            _states[typeof(AttackingState)] = new AttackingState(playerEntity, this);
             
             _current = _states[typeof(IdleState)];
             _current.Enter();

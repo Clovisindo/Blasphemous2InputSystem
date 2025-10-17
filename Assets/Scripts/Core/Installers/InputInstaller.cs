@@ -14,6 +14,7 @@ namespace Game.Core.Installers
 
             container.RegisterSingleton<InputAdapter>(adapter);
             container.RegisterSingleton<IInputService>(adapter);
+            container.RegisterSingleton<InputBuffer>(new InputBuffer(maxSize: 12, windowTime: 0.6f));
         }
     }
 }

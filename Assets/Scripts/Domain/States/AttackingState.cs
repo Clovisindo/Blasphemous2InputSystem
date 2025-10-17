@@ -1,4 +1,5 @@
-﻿using Game.Events;
+﻿using Game.Domain.Entities;
+using Game.Events;
 using Game.Input.Commands;
 using Game.Settings;
 using UnityEngine;
@@ -7,24 +8,22 @@ namespace Game.Domain.StateMachine
 {
     public class AttackingState : IPlayerState
     {
+        readonly PlayerEntity _playerEntity;
         readonly PlayerStateMachine _machine;
-        readonly PlayerSettingsSO _settings;
-        readonly IEventBus _bus;
         float _attackDuration = 0.4f;//esto se cargaria de un abilitySystem y SOs
         float _timer;
 
-        public AttackingState(PlayerStateMachine machine, PlayerSettingsSO settings, IEventBus bus)
+        public AttackingState(PlayerEntity playerEntity, PlayerStateMachine machine)
         {
+            _playerEntity = playerEntity;
             _machine = machine;
-            _settings = settings;
-            _bus = bus;
         }
 
         public void Enter()
         {
             Debug.Log("Enter Attacking");
             _timer = _attackDuration;
-            //_bus.Publish(new PlayerAnimationEvent("Attack"));
+            _playerEntity.StartAttack();
         }
 
         public void Exit() { }
@@ -39,6 +38,7 @@ namespace Game.Domain.StateMachine
             _timer -= dt;
             if (_timer <= 0f)
             {
+                _playerEntity.StopAttack();
                 _machine.ChangeState<IdleState>();
             }
         }

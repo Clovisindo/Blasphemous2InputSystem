@@ -1,7 +1,6 @@
-﻿using Game.Events;
+﻿using Game.Domain.Entities;
+using Game.Events;
 using Game.Input.Commands;
-using Game.Settings;
-using System;
 using UnityEngine;
 
 namespace Game.Domain.StateMachine
@@ -9,14 +8,13 @@ namespace Game.Domain.StateMachine
     public class MovingState : IPlayerState
     {
         readonly PlayerStateMachine _stateMachine;
-        readonly PlayerSettingsSO _settings;
+        readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
-        Vector2 _lastInput;
 
-        public MovingState(PlayerStateMachine stateMachine, PlayerSettingsSO settings, IEventBus eventBus)
+        public MovingState(PlayerEntity playerEntity, PlayerStateMachine stateMachine, IEventBus eventBus)
         {
+            _playerEntity = playerEntity;
             _stateMachine = stateMachine;
-            _settings = settings;
             _eventBus = eventBus;
         }
 
@@ -32,25 +30,29 @@ namespace Game.Domain.StateMachine
         {
             if ( cmd is MovementCommand move)
             {
-                //Debug.Log($"MovementCommand vector move : {move.Direction}");
-                _lastInput = move.Direction;
-                if(_lastInput.sqrMagnitude < 0.01f)
-                    _stateMachine.ChangeState<IdleState>();
+                HandleMovement(move);
             }
             else if ( cmd is AttackCommand atk)
             {
                 _stateMachine.ChangeState<AttackingState>();
-                _eventBus.Publish(new PlayerAttackEvent { Type = atk.Type });
+                _eventBus.Publish(new PlayerAttackEvent { Type = atk.Type });// ToDo: quitar por que ya no va aqui si no en la entidad
             }
         }
 
-        public void Update(float dt)
+        void HandleMovement( MovementCommand move)
         {
-            if (_lastInput.sqrMagnitude > 0.01f)
+            if (move.Direction.sqrMagnitude > 0.01f)
+                _playerEntity.Move(move.Direction, move.Timestamp);
+            else
             {
-                var movement = _lastInput.normalized * _settings.moveSpeed * dt;
-                _eventBus.Publish(new PlayerMoveEvent { MovementDelta = movement });
+                _stateMachine.ChangeState<IdleState>();
             }
         }
+
+        /// <summary>
+        /// solo par animaciones dependientes del tiempo
+        /// </summary>
+        /// <param name="dt"></param>
+        public void Update(float dt) { }
     }
 }

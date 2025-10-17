@@ -1,7 +1,5 @@
 ﻿using Game.Domain.Entities;
-using Game.Events;
 using Game.Input.Commands;
-using Game.Settings;
 using UnityEngine;
 
 namespace Game.Domain.StateMachine

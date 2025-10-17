@@ -1,11 +1,6 @@
 ﻿using Game.Core.Installers;
 using Game.Core.Orchestrator;
-using Game.Domain.Entities;
-using Game.Events;
-using Game.Settings;
-using System;
 using UnityEngine;
-using static Game.Events.PlayerEvents.PlayerEvents;
 
 namespace Game.Core
 {

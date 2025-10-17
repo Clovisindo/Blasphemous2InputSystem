@@ -3,7 +3,6 @@ using Game.Domain.StateMachine;
 using Game.Events;
 using Game.Input;
 using Game.Services.Application;
-using Game.Settings;
 
 namespace Game.Core.Installers
 {

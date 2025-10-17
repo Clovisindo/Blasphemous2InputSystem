@@ -2,7 +2,6 @@
 using Game.Events;
 using Game.Input;
 using Game.Input.Commands;
-using Game.Settings;
 using System;
 using System.Collections.Generic;
 

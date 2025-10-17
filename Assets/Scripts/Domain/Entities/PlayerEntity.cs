@@ -1,5 +1,4 @@
 ﻿using Game.Events;
-using Game.Events.PlayerEvents;
 using Game.Settings;
 using System;
 using UnityEngine;

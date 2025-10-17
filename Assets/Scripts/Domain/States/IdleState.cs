@@ -1,8 +1,5 @@
 ﻿using Game.Domain.Entities;
-using Game.Events;
 using Game.Input.Commands;
-using Game.Settings;
-using System;
 using UnityEngine;
 
 namespace Game.Domain.StateMachine

@@ -1,4 +1,5 @@
 ﻿using Game.Domain.Entities;
+using Game.Events;
 using Game.Input.Commands;
 using UnityEngine;
 
@@ -8,13 +9,15 @@ namespace Game.Domain.StateMachine
     {
         readonly PlayerEntity _playerEntity;
         readonly PlayerStateMachine _stateMachine;
+        readonly IEventBus _eventBus;
 
-        public IdleState(PlayerEntity playerEntity, PlayerStateMachine stateMachine)
+        public IdleState(PlayerEntity playerEntity, PlayerStateMachine stateMachine, IEventBus eventBus)
         {
             _playerEntity = playerEntity;
             _stateMachine = stateMachine;
+            _eventBus = eventBus;
         }
-        public void Enter()
+        public void Enter(IStateContext context = null)
         {
             Debug.Log("Enter Idle");
             //_eventBus.Publish(new PlayerAnimationEvent("Idle"));
@@ -30,7 +33,7 @@ namespace Game.Domain.StateMachine
             }
             else if (cmd is AttackCommand atk)
             {
-                _stateMachine.ChangeState<AttackingState>();
+                _stateMachine.ChangeState<AttackingState>(new AttackStateContext(atk.Type));
             }
         }
 

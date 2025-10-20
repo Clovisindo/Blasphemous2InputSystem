@@ -22,29 +22,33 @@ namespace Game.Application
         {
             _eventBus = Bootstrapper.Container.Resolve<IEventBus>();
             _playerId = Bootstrapper.Container.Resolve<PlayerEntity>().Id;
-            _eventBus.Subscribe<AttackStarted>(OnAttackStarted);
-            _eventBus.Subscribe<AttackFinished>(OnAttackFinished);
-            _eventBus.Subscribe<Movement>(OnMoved);
+            _eventBus.Subscribe<PlayerAttackStarted>(OnAttackStarted);
+            _eventBus.Subscribe<PlayerAttackFinished>(OnAttackFinished);
+            _eventBus.Subscribe<PlayerMovement>(OnMoved);
         }
 
         void OnDestroy()
         {
-            _eventBus.Unsubscribe<AttackStarted>(OnAttackStarted);
-            _eventBus.Unsubscribe<AttackFinished>(OnAttackFinished);
-            _eventBus.Unsubscribe<Movement>(OnMoved);
+            _eventBus.Unsubscribe<PlayerAttackStarted>(OnAttackStarted);
+            _eventBus.Unsubscribe<PlayerAttackFinished>(OnAttackFinished);
+            _eventBus.Unsubscribe<PlayerMovement>(OnMoved);
         }
 
-        private void OnAttackStarted(AttackStarted started)
+        private void OnAttackStarted(PlayerAttackStarted evt)
         {
-            throw new NotImplementedException();
+            if (evt.PlayerId != _playerId) return;
+            if(evt.AttackType != Utilities.AttackType.Heavy)
+            {
+                //ToDo Animacion
+            }
         }
 
-        private void OnAttackFinished(AttackFinished finished)
+        private void OnAttackFinished(PlayerAttackFinished evt)
         {
-            throw new NotImplementedException();
+            if (evt.PlayerId != _playerId) return;
         }
 
-        private void OnMoved(Movement evt)
+        private void OnMoved(PlayerMovement evt)
         {
             if (evt.PlayerId != _playerId) return;
             transform.position = evt.Direction;

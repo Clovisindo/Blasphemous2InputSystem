@@ -18,10 +18,11 @@ namespace Game.Domain.StateMachine
             _eventBus = eventBus;
         }
 
-        public void Enter()
+        public void Enter(IStateContext context = null)
         {
             Debug.Log("Enter Moving");
             //_eventBus.Publish(new PlayerAnimationEvent("Run"));
+            //_eventBus.Publish(new PlayerStartedMovingEvent(_entity.Id));
         }
 
         public void Exit() { }
@@ -34,8 +35,7 @@ namespace Game.Domain.StateMachine
             }
             else if ( cmd is AttackCommand atk)
             {
-                _stateMachine.ChangeState<AttackingState>();
-                _eventBus.Publish(new PlayerAttackEvent { Type = atk.Type });// ToDo: quitar por que ya no va aqui si no en la entidad
+                _stateMachine.ChangeState<AttackingState>(new AttackStateContext(atk.Type));
             }
         }
 
@@ -45,6 +45,7 @@ namespace Game.Domain.StateMachine
                 _playerEntity.Move(move.Direction, move.Timestamp);
             else
             {
+                //_eventBus.Publish(new PlayerStoppedMovingEvent(_entity.Id));
                 _stateMachine.ChangeState<IdleState>();
             }
         }

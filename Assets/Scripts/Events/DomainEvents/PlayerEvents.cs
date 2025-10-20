@@ -1,12 +1,13 @@
 ﻿
 using System;
 using UnityEngine;
+using static Utilities;
 
 namespace Game.Events.PlayerEvents
 {
     public static class PlayerEvents
     {
-        public struct CoreReadyEvent 
+        public readonly struct CoreReadyEvent : IApplicationEvent
         {
             public readonly Guid PlayerId;
             public CoreReadyEvent(Guid id)
@@ -14,23 +15,29 @@ namespace Game.Events.PlayerEvents
                 PlayerId = id;
             }
         };
-        public struct AttackStarted
+        public readonly struct PlayerAttackStarted :IDomainEvent
         {
             public readonly Guid PlayerId;
-            public AttackStarted(Guid id) => PlayerId = id;
+            public readonly AttackType AttackType;
+
+            public PlayerAttackStarted(Guid playerId, AttackType attackType)
+            {
+                PlayerId = playerId;
+                AttackType = attackType;
+            }
         }
 
-        public struct AttackFinished
+        public readonly struct PlayerAttackFinished : IDomainEvent
         {
             public readonly Guid PlayerId;
-            public AttackFinished(Guid id) => PlayerId = id;
+            public PlayerAttackFinished(Guid id) => PlayerId = id;
         }
 
-        public struct Movement
+        public readonly struct PlayerMovement : IDomainEvent
         {
             public readonly Guid PlayerId;
             public readonly Vector2 Direction;
-            public Movement(Guid id, Vector2 dir)
+            public PlayerMovement(Guid id, Vector2 dir)
             {
                 PlayerId = id;
                 Direction = dir;

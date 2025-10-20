@@ -16,19 +16,19 @@ namespace Game.Domain.StateMachine
         public PlayerStateMachine(PlayerEntity playerEntity,IEventBus eventBus)
         {
             _playerEntity = playerEntity;
-            _states[typeof(IdleState)] = new IdleState(playerEntity, this);
+            _states[typeof(IdleState)] = new IdleState(playerEntity, this, eventBus);
             _states[typeof(MovingState)] = new MovingState(playerEntity, this, eventBus);
-            _states[typeof(AttackingState)] = new AttackingState(playerEntity, this);
+            _states[typeof(AttackingState)] = new AttackingState(playerEntity, this, eventBus);
             
             _current = _states[typeof(IdleState)];
             _current.Enter();
         }
 
-        public void ChangeState<T>() where T : IPlayerState
+        public void ChangeState<T>(IStateContext context = null) where T : IPlayerState
         {
             _current.Exit();
             _current = _states[typeof(T)];
-            _current.Enter();
+            _current.Enter(context);
         }
 
         public void ProcessCommand(InputCommand cmd) => _current.HandleCommand(cmd);

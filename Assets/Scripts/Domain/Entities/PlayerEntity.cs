@@ -34,7 +34,7 @@ namespace Game.Domain.Entities
             Position += direction * Stats.Speed * deltaTime;
             if (direction.x != 0)
                 FacingDirection = new Vector2(Mathf.Sign(direction.x), 0);
-            _eventBus.Publish(new Movement(Id, Position));
+            _eventBus.Publish(new PlayerMovement(Id, Position));
         }
         public void TakeDamage(int amount)
         {

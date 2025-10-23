@@ -20,8 +20,7 @@ namespace Game.Domain.StateMachine
 
         public void Enter(IStateContext context = null)
         {
-            Debug.Log("Enter Moving");
-            //_eventBus.Publish(new PlayerAnimationEvent("Run"));
+            Debug.Log("Enter Moving state.");
             //_eventBus.Publish(new PlayerStartedMovingEvent(_entity.Id));
         }
 
@@ -32,6 +31,10 @@ namespace Game.Domain.StateMachine
             if ( cmd is MovementCommand move)
             {
                 HandleMovement(move);
+            }
+            else if (cmd is JumpCommand jump)
+            {
+                _stateMachine.ChangeState<JumpState>();
             }
             else if ( cmd is AttackCommand atk)
             {

@@ -16,10 +16,11 @@ namespace Game.Domain.StateMachine
         public PlayerStateMachine(PlayerEntity playerEntity,IEventBus eventBus)
         {
             _playerEntity = playerEntity;
-            _states[typeof(IdleState)] = new IdleState(playerEntity, this, eventBus);
-            _states[typeof(MovingState)] = new MovingState(playerEntity, this, eventBus);
-            _states[typeof(AttackingState)] = new AttackingState(playerEntity, this, eventBus);
-            
+            _states[typeof(IdleState)] = new IdleState(_playerEntity, this, eventBus);
+            _states[typeof(MovingState)] = new MovingState(_playerEntity, this, eventBus);
+            _states[typeof(AttackingState)] = new AttackingState(_playerEntity, this, eventBus);
+            _states[typeof(JumpState)] = new JumpState(_playerEntity, this, eventBus);
+
             _current = _states[typeof(IdleState)];
             _current.Enter();
         }

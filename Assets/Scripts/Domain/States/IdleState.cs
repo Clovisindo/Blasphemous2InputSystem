@@ -31,6 +31,10 @@ namespace Game.Domain.StateMachine
             {
                 _stateMachine.ChangeState<MovingState>();
             }
+            else if (cmd is JumpCommand jump)
+            {
+                _stateMachine.ChangeState<JumpState>();
+            }
             else if (cmd is AttackCommand atk)
             {
                 _stateMachine.ChangeState<AttackingState>(new AttackStateContext(atk.Type));

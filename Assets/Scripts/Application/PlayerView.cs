@@ -25,6 +25,7 @@ namespace Game.Application
             _eventBus.Subscribe<PlayerAttackStarted>(OnAttackStarted);
             _eventBus.Subscribe<PlayerAttackFinished>(OnAttackFinished);
             _eventBus.Subscribe<PlayerMovement>(OnMoved);
+            //_bus.Subscribe<PlayerAnimationEvent>(OnAnimEvent);
         }
 
         void OnDestroy()
@@ -55,6 +56,21 @@ namespace Game.Application
             //aplicar direcion a la que se enfoca el personaje
             //_animator.SetFloat("Speed", evt.Direction.magnitude);
         }
+        //void OnAnimEvent(PlayerAnimationEvent e)
+        //{
+        //    switch (e.Type)
+        //    {
+        //        case PlayerAnimationType.JumpStart:
+        //            _animator.SetTrigger("Jump");
+        //            break;
+        //        case PlayerAnimationType.FallStart:
+        //            _animator.SetTrigger("Fall");
+        //            break;
+        //        case PlayerAnimationType.Land:
+        //            _animator.SetTrigger("Land");
+        //            break;
+        //    }
+        //}
 
         private void Update()
         {

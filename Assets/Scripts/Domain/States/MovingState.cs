@@ -10,6 +10,7 @@ namespace Game.Domain.StateMachine
         readonly PlayerStateMachine _stateMachine;
         readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
+        Vector2 _lasMoveDirection;// pasar info a JumpState del ultimo movimiento
 
         public MovingState(PlayerEntity playerEntity, PlayerStateMachine stateMachine, IEventBus eventBus)
         {
@@ -34,7 +35,7 @@ namespace Game.Domain.StateMachine
             }
             else if (cmd is JumpCommand jump)
             {
-                _stateMachine.ChangeState<JumpState>();
+                _stateMachine.ChangeState<JumpState>(new JumpStateContext(_lasMoveDirection));
             }
             else if ( cmd is AttackCommand atk)
             {
@@ -44,6 +45,7 @@ namespace Game.Domain.StateMachine
 
         void HandleMovement( MovementCommand move)
         {
+            _lasMoveDirection = move.Direction;
             if (move.Direction.sqrMagnitude > 0.01f)
                 _playerEntity.Move(move.Direction, move.Timestamp);
             else

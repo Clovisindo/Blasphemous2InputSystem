@@ -33,7 +33,7 @@ namespace Game.Domain.StateMachine
             }
             else if (cmd is JumpCommand jump)
             {
-                _stateMachine.ChangeState<JumpState>();
+                _stateMachine.ChangeState<JumpState>(new JumpStateContext(Vector2.zero));
             }
             else if (cmd is AttackCommand atk)
             {

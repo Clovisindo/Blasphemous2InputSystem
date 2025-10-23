@@ -10,6 +10,7 @@ namespace Game.Domain.StateMachine
         readonly PlayerStateMachine _stateMachine;
         readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
+        Vector2 _initialDir;
 
         bool _isFalling;
 
@@ -23,8 +24,9 @@ namespace Game.Domain.StateMachine
         public void Enter(IStateContext context = null)
         {
             Debug.Log("Enter Jump State.");
+            if (context is IStateContext<JumpContextData> jumpCtx)
+                _initialDir = jumpCtx.Data.MoveDirecion;
             _isFalling = false;
-            _playerEntity.StartJump();
             _playerEntity.Jump();
             //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.JumpStart);
         }
@@ -37,23 +39,27 @@ namespace Game.Domain.StateMachine
 
         public void HandleCommand(InputCommand cmd)
         {
-            // No procesamos más comandos durante el salto,
-            // pero podríamos meterlos en el inputBuffer si quisieramos
-            //o permitir atacar
+            if (cmd is MovementCommand move)
+            {
+                _initialDir = move.Direction;
+            }
         }
 
         private void HandleJump(float dt)
         {
             _playerEntity.ApplyGravity(_playerEntity.Stats.Gravity, dt);
+
+            if (_initialDir != Vector2.zero)//si hubo antes o en jumpstate algun comando de movimiento,actualizamos la posicion
+                _playerEntity.Move(_initialDir, dt);
+
             if (_playerEntity.VerticalVelocity < 0 && !_isFalling)
             {
                 _isFalling = true;
                 //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.FallStart));
             }
-            if( _playerEntity.HasLanded())
+            if( _playerEntity.IsGrounded)
             {
                 _playerEntity.ApplyGravity(0, dt);
-                _playerEntity.StopJump();
                 _stateMachine.ChangeState<IdleState>();
                 //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.Land));
             }

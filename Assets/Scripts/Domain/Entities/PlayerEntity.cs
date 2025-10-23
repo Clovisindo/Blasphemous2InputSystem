@@ -18,8 +18,7 @@ namespace Game.Domain.Entities
         public float VerticalVelocity { get; private set; }
         readonly IEventBus _eventBus;
         public AttackDataSO[] attacks;// pendiente ver que usamos de aqui o no, si hacemos un SO o no
-        public float moveSpeed = 5f;
-        public bool IsGrounded { get; private set; }
+        public bool IsGrounded { get; private set; }//interno
         public bool IsAttacking { get; private set; }
         public bool IsClimbing { get; private set; }
         public bool IsHurt { get; private set; }
@@ -34,9 +33,10 @@ namespace Game.Domain.Entities
 
         public void Move (Vector2 direction, float deltaTime)
         {
-            Position += direction * Stats.Speed * deltaTime;
-            if (direction.x != 0)
-                FacingDirection = new Vector2(Mathf.Sign(direction.x), 0);
+            float horizontalMove = direction.x;
+            Position += deltaTime * horizontalMove * Stats.Speed * Vector2.right;
+            if (horizontalMove != 0)
+                FacingDirection = new Vector2(Mathf.Sign(horizontalMove), 0);
             _eventBus.Publish(new PlayerMovement(Id, Position));
         }
 
@@ -48,6 +48,7 @@ namespace Game.Domain.Entities
 
         public void Jump()
         {
+            IsGrounded = false;
             VerticalVelocity = Stats.JumpForce;
             _eventBus.Publish( new PlayerJumpStartedEvent(Id, Stats.JumpForce));
         }
@@ -62,30 +63,26 @@ namespace Game.Domain.Entities
             VerticalVelocity = gravity == 0 ? 0 : VerticalVelocity - gravity * deltaTime;
             Position += deltaTime * VerticalVelocity * Vector2.up;
             _eventBus.Publish(new PlayerMovement(Id, Position));
+            HasLanded();
         }
 
         // ToDo: temporal para testeo cuando haya fisicas y escenario
-        public bool HasLanded()
+        public void HasLanded()
         {
             // Simplificación: leer del controller o de colisiones por evento?
-            return Position.y <= 0;
+            if (Position.y <= 0)
+                IsGrounded = true;
         }
 
 
         public void StartAttack() => IsAttacking = true;
         public void StopAttack() => IsAttacking = false;
-
-        public void StartJump() => IsGrounded = false;
-        public void StopJump() => IsGrounded = true;
-
         public void StartClimb() => IsClimbing = true;
         public void StopClimb() => IsClimbing = false;
-
         public void StartHurt() => IsHurt = true;
         public void StopHurt() => IsHurt = false;
         public void StartDash() => IsDashing = true;
         public void StopDash() => IsDashing = false;
-
         public void StartDead() => IsDead = true;
         public void StopDead() => IsDead = false;
     }

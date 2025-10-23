@@ -6,18 +6,12 @@ namespace Game.Domain.StateMachine
     {
         public readonly AttackType Type;
 
-        public AttackContextData(AttackType type)
-        {
-            Type = type;
-        }
+        public AttackContextData(AttackType type) => Type = type;
     }
     public class AttackStateContext : IStateContext<AttackContextData>
     {
         public AttackContextData Data { get; }
 
-        public AttackStateContext(AttackType type)
-        {
-            Data = new AttackContextData(type);
-        }
+        public AttackStateContext(AttackType type) => Data = new AttackContextData(type);
     }
 }

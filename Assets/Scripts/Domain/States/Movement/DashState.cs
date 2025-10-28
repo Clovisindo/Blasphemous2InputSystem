@@ -3,16 +3,18 @@ using Game.Events;
 using Game.Input.Commands;
 using System;
 using UnityEngine;
+using static Utilities;
 
 namespace Game.Domain.StateMachine
 {
-    public class DashState : IPlayerState
+    public class DashState : IMovementState
     {
-        readonly PlayerStateMachine _stateMachine;
+        readonly IMovementStateMachine _stateMachine;
         readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
+        public MovementStateType StateType => MovementStateType.Dash;
 
-        public DashState(PlayerStateMachine stateMachine, PlayerEntity playerEntity, IEventBus eventBus)
+        public DashState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IEventBus eventBus)
         {
             _stateMachine = stateMachine;
             _playerEntity = playerEntity;
@@ -34,7 +36,7 @@ namespace Game.Domain.StateMachine
         {
             //event bus fin animacion de dash ??
             _playerEntity.StopDash();
-            _stateMachine.ChangeState<IdleState>();
+            _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
 
         }
     }

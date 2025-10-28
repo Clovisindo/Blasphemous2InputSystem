@@ -1,18 +1,19 @@
 ﻿using Game.Domain.Entities;
 using Game.Events;
 using Game.Input.Commands;
-using System;
 using UnityEngine;
+using static Utilities;
 
 namespace Game.Domain.StateMachine
 {
-    public class DeathState : IPlayerState
+    public class DeathState : IMovementState
     {
         readonly PlayerEntity _playerEntity;
-        readonly PlayerStateMachine _machine;
+        readonly IMovementStateMachine _machine;
         readonly IEventBus _eventBus;
+        public MovementStateType StateType => MovementStateType.Death;
 
-        public DeathState(PlayerEntity playerEntity, PlayerStateMachine machine, IEventBus eventBus)
+        public DeathState(PlayerEntity playerEntity, IMovementStateMachine machine, IEventBus eventBus)
         {
             _playerEntity = playerEntity;
             _machine = machine;

@@ -2,16 +2,18 @@
 using Game.Events;
 using Game.Input.Commands;
 using UnityEngine;
+using static Utilities;
 
 namespace Game.Domain.StateMachine
 {
-    public class IdleState : IPlayerState
+    public class IdleState : IMovementState
     {
         readonly PlayerEntity _playerEntity;
-        readonly PlayerStateMachine _stateMachine;
+        readonly IMovementStateMachine _stateMachine;
         readonly IEventBus _eventBus;
+        public MovementStateType StateType => MovementStateType.Idle;
 
-        public IdleState(PlayerEntity playerEntity, PlayerStateMachine stateMachine, IEventBus eventBus)
+        public IdleState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IEventBus eventBus)
         {
             _playerEntity = playerEntity;
             _stateMachine = stateMachine;
@@ -29,15 +31,11 @@ namespace Game.Domain.StateMachine
         {
             if (cmd is MovementCommand move && move.Direction.sqrMagnitude > 0.01f)
             {
-                _stateMachine.ChangeState<MovingState>();
+                _stateMachine.ChangeState<MovingState>(MovementStateType.Moving);
             }
             else if (cmd is JumpCommand jump)
             {
-                _stateMachine.ChangeState<JumpState>(new JumpStateContext(Vector2.zero));
-            }
-            else if (cmd is AttackCommand atk)
-            {
-                _stateMachine.ChangeState<AttackingState>(new AttackStateContext(atk.Type));
+                _stateMachine.ChangeState<JumpState>( MovementStateType.Jumping ,new JumpStateContext(Vector2.zero));
             }
         }
 

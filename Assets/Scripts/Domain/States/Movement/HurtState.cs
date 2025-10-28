@@ -2,16 +2,18 @@
 using Game.Events;
 using Game.Input.Commands;
 using UnityEngine;
+using static Utilities;
 
 namespace Game.Domain.StateMachine
 {
-    public class HurtState : IPlayerState
+    public class HurtState : IMovementState
     {
-        readonly PlayerStateMachine _stateMachine;
+        readonly IMovementStateMachine _stateMachine;
         readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
+        public MovementStateType StateType => MovementStateType.Hurt;
 
-        public HurtState(PlayerStateMachine stateMachine, PlayerEntity playerEntity, IEventBus eventBus)
+        public HurtState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IEventBus eventBus)
         {
             _stateMachine = stateMachine;
             _playerEntity = playerEntity;
@@ -30,7 +32,7 @@ namespace Game.Domain.StateMachine
         {
             //event bus fin animacion de daño??
             _playerEntity.StopHurt();
-            _stateMachine.ChangeState<IdleState>();
+            _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
         }
 
         public void HandleCommand(InputCommand cmd) { }

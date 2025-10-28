@@ -2,19 +2,21 @@
 using Game.Events;
 using Game.Input.Commands;
 using UnityEngine;
+using static Utilities;
 
 namespace Game.Domain.StateMachine
 {
-    public class JumpState : IPlayerState
+    public class JumpState : IMovementState
     {
-        readonly PlayerStateMachine _stateMachine;
+        readonly IMovementStateMachine _stateMachine;
         readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
         Vector2 _initialDir;
+        public MovementStateType StateType => MovementStateType.Jumping;
 
         bool _isFalling;
 
-        public JumpState(PlayerEntity playerEntity, PlayerStateMachine stateMachine, IEventBus eventBus)
+        public JumpState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IEventBus eventBus)
         {
             _stateMachine = stateMachine;
             _playerEntity = playerEntity;
@@ -60,7 +62,7 @@ namespace Game.Domain.StateMachine
             if( _playerEntity.IsGrounded)
             {
                 _playerEntity.ApplyGravity(0, dt);
-                _stateMachine.ChangeState<IdleState>();
+                _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
                 //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.Land));
             }
         }

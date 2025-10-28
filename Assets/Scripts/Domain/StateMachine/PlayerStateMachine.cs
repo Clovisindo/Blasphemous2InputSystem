@@ -2,39 +2,27 @@
 using Game.Events;
 using Game.Input;
 using Game.Input.Commands;
-using System;
-using System.Collections.Generic;
 
 namespace Game.Domain.StateMachine
 {
     public class PlayerStateMachine
     {
-        readonly Dictionary<Type, IPlayerState> _states = new();
-        readonly PlayerEntity _playerEntity;
-        IPlayerState _current;
+        public IMovementStateMachine Movement { get; }
+        public IActionStateMachine Action { get; }
 
         public PlayerStateMachine(PlayerEntity playerEntity,IEventBus eventBus)
         {
-            _playerEntity = playerEntity;
-            _states[typeof(IdleState)] = new IdleState(_playerEntity, this, eventBus);
-            _states[typeof(MovingState)] = new MovingState(_playerEntity, this, eventBus);
-            _states[typeof(AttackingState)] = new AttackingState(_playerEntity, this, eventBus);
-            _states[typeof(JumpState)] = new JumpState(_playerEntity, this, eventBus);
-
-            _current = _states[typeof(IdleState)];
-            _current.Enter();
+            Movement = new MovementStateMachine(playerEntity, eventBus);
+            Action = new ActionStateMachine(playerEntity, eventBus);
         }
 
-        public void ChangeState<T>(IStateContext context = null) where T : IPlayerState
+        public void ProcessCommand(InputCommand cmd) { }
+
+        public void Update(float dt)
         {
-            _current.Exit();
-            _current = _states[typeof(T)];
-            _current.Enter(context);
+            Movement.Update(dt);
+            Action.Update(dt);
         }
-
-        public void ProcessCommand(InputCommand cmd) => _current.HandleCommand(cmd);
-
-        public void Update(float dt) => _current.Update(dt);
 
         public void ExecuteCombo(ComboType type)
         {

@@ -2,16 +2,18 @@
 using Game.Events;
 using Game.Input.Commands;
 using UnityEngine;
+using static Utilities;
 
 namespace Game.Domain.StateMachine
 {
-    public class ClimbState : IPlayerState
+    public class ClimbState : IMovementState
     {
-        readonly PlayerStateMachine _stateMachine;
+        readonly IMovementStateMachine _stateMachine;
         readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
+        public MovementStateType StateType => MovementStateType.Climb;
 
-        public ClimbState(PlayerStateMachine stateMachine, PlayerEntity playerEntity, IEventBus eventBus)
+        public ClimbState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IEventBus eventBus)
         {
             _stateMachine = stateMachine;
             _playerEntity = playerEntity;
@@ -29,11 +31,7 @@ namespace Game.Domain.StateMachine
         {
             if (cmd is JumpCommand jump)
             {
-                _stateMachine.ChangeState<JumpState>();
-            }
-            else if ( cmd is AttackCommand attack)
-            {
-                _stateMachine.ChangeState<AttackingState>(new AttackStateContext(attack.Type));
+                _stateMachine.ChangeState<JumpState>(MovementStateType.Jumping);
             }
         }
 
@@ -44,9 +42,5 @@ namespace Game.Domain.StateMachine
             _playerEntity.StopClimb();
             //event bus animacion si es necesario
         }
-
-       
-
-        
     }
 }

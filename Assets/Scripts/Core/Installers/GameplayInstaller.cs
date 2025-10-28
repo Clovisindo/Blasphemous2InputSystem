@@ -22,7 +22,9 @@ namespace Game.Core.Installers
             container.RegisterSingleton<IPlayerApplicationService>(
                 new PlayerApplicationService(
                     container.Resolve<PlayerStateMachine>(),
-                    container.Resolve<InputBuffer>()
+                    container.Resolve<InputBuffer>(),
+                    container.Resolve<PlayerEntity>(),
+                    container.Resolve<IEventBus>()
                     ));
         }
     }

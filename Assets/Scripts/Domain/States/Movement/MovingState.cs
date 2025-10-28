@@ -2,17 +2,19 @@
 using Game.Events;
 using Game.Input.Commands;
 using UnityEngine;
+using static Utilities;
 
 namespace Game.Domain.StateMachine
 {
-    public class MovingState : IPlayerState
+    public class MovingState : IMovementState
     {
-        readonly PlayerStateMachine _stateMachine;
+        readonly IMovementStateMachine _stateMachine;
         readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
         Vector2 _lasMoveDirection;// pasar info a JumpState del ultimo movimiento
+        public MovementStateType StateType => MovementStateType.Moving;
 
-        public MovingState(PlayerEntity playerEntity, PlayerStateMachine stateMachine, IEventBus eventBus)
+        public MovingState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IEventBus eventBus)
         {
             _playerEntity = playerEntity;
             _stateMachine = stateMachine;
@@ -35,11 +37,7 @@ namespace Game.Domain.StateMachine
             }
             else if (cmd is JumpCommand jump)
             {
-                _stateMachine.ChangeState<JumpState>(new JumpStateContext(_lasMoveDirection));
-            }
-            else if ( cmd is AttackCommand atk)
-            {
-                _stateMachine.ChangeState<AttackingState>(new AttackStateContext(atk.Type));
+                _stateMachine.ChangeState<JumpState>( MovementStateType.Jumping, new JumpStateContext(_lasMoveDirection));
             }
         }
 
@@ -51,7 +49,7 @@ namespace Game.Domain.StateMachine
             else
             {
                 //_eventBus.Publish(new PlayerStoppedMovingEvent(_entity.Id));
-                _stateMachine.ChangeState<IdleState>();
+                _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
             }
         }
 

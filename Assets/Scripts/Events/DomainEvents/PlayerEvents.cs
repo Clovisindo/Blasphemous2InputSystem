@@ -54,5 +54,46 @@ namespace Game.Events.PlayerEvents
                 Direction = dir;
             }
         }
+
+        public readonly struct PlayerDamagedEvent : IDomainEvent
+        {
+            public readonly Guid PlayerId;
+            public readonly int Damage;
+            public PlayerDamagedEvent(Guid id, int damage)
+            {
+                PlayerId = id;
+                Damage = damage;
+            }
+        }
+
+        public readonly struct PlayerDiedEvent : IDomainEvent
+        {
+            public readonly Guid PlayerId;
+            public PlayerDiedEvent(Guid id) => PlayerId = id;
+        }
+
+        public readonly struct PlayerHealedEvent : IDomainEvent
+        {
+            public readonly Guid PlayerId;
+            public readonly int Amount;
+            public PlayerHealedEvent(Guid id, int amount)
+            {
+                PlayerId = id;
+                Amount = amount;
+            }
+        }
+        
+         public readonly struct PlayerActionBlockedEvent : IDomainEvent
+        {
+            public readonly Guid PlayerId;
+            public readonly ActionStateType ActionStateType;
+            public readonly MovementStateType CurrentMoveStateType;
+            public PlayerActionBlockedEvent(Guid playerId, ActionStateType actionStateType, MovementStateType currentMoveStateType)
+            {
+                PlayerId = playerId;
+                ActionStateType = actionStateType;
+                CurrentMoveStateType = currentMoveStateType;
+            }
+        }
     }
 }

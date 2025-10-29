@@ -35,9 +35,13 @@ namespace Game.Domain.StateMachine
             {
                 HandleMovement(move);
             }
-            else if (cmd is JumpCommand jump)
+            else if (cmd is JumpCommand)
             {
                 _stateMachine.ChangeState<JumpState>( MovementStateType.Jumping, new JumpStateContext(_lasMoveDirection));
+            }
+            else if (cmd is DashCommand)
+            {
+                _stateMachine.ChangeState<DashState>(MovementStateType.Dash, new DashStateContext(_lasMoveDirection));
             }
         }
 

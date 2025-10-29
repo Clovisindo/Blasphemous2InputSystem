@@ -29,9 +29,12 @@ namespace Game.Input
             _actions.Gameplay.Movement.canceled += OnMovementCanceled;
             _actions.Gameplay.Attack.performed += OnAttackPerformed;
             _actions.Gameplay.Jump.performed += OnJumpPerformed;
+            _actions.Gameplay.Dash.performed += OnDashPerformed;
 
             _actions.Enable();
         }
+
+       
 
         public List<InputCommand> Poll(float deltaTime)
         {
@@ -85,6 +88,12 @@ namespace Game.Input
             if (!_deviceFilter(ctx.control.device)) return;
             _jumpQueue.Enqueue(new JumpCommand(Time.unscaledDeltaTime));
         }
+
+        private void OnDashPerformed(InputAction.CallbackContext ctx)
+        {
+            if (!_deviceFilter(ctx.control.device)) return;
+            _jumpQueue.Enqueue(new DashCommand(Time.unscaledDeltaTime));
+        }
         public void ShutDown()
         {
             if (_actions != null)
@@ -93,6 +102,7 @@ namespace Game.Input
                 _actions.Gameplay.Movement.canceled -= OnMovementCanceled;
                 _actions.Gameplay.Attack.performed -= OnAttackPerformed;
                 _actions.Gameplay.Jump.performed -= OnJumpPerformed;
+                _actions.Gameplay.Dash.performed -= OnDashPerformed;
                 _actions.Disable();
             }
         }

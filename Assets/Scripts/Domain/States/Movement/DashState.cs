@@ -12,6 +12,10 @@ namespace Game.Domain.StateMachine
         readonly IMovementStateMachine _stateMachine;
         readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
+        private StateTimer _timer;
+        private Vector2 _direction;
+
+
         public MovementStateType StateType => MovementStateType.Dash;
 
         public DashState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IEventBus eventBus)
@@ -24,20 +28,29 @@ namespace Game.Domain.StateMachine
         public void Enter(IStateContext context = null)
         {
             Debug.Log("Enter Dash State.");
-            //event bus animacion de dash
-            _playerEntity.StartDash();//como gestionamos el movimiento?
+
+            if (context is IStateContext<DashContextData> dashCtx)
+                _direction = dashCtx.Data.Direction;
+
+            _timer = new StateTimer(0.2f);
+            //_eventBus.Publish(new PlayerDashStarted(_entity.Id, _direction));
+            _playerEntity.StartDash();
         }
 
         public void HandleCommand(InputCommand cmd) { }
 
-        public void Update(float dt) { }
-
-        public void Exit()
+        public void Update(float dt) 
         {
-            //event bus fin animacion de dash ??
-            _playerEntity.StopDash();
-            _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
+            _playerEntity.Dash(_direction, _playerEntity.Stats.DashSpeed, dt);
+            _timer.Update(dt);
 
+            if (_timer.IsFinished)
+            {
+                _playerEntity.EndDash();
+                _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
+            }
         }
+
+        public void Exit() { }
     }
 }

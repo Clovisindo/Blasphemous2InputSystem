@@ -33,9 +33,13 @@ namespace Game.Domain.StateMachine
             {
                 _stateMachine.ChangeState<MovingState>(MovementStateType.Moving);
             }
-            else if (cmd is JumpCommand jump)
+            else if (cmd is JumpCommand)
             {
                 _stateMachine.ChangeState<JumpState>( MovementStateType.Jumping ,new JumpStateContext(Vector2.zero));
+            }
+            else if (cmd is DashCommand dashCmd)
+            {
+                _stateMachine.ChangeState<DashState>(MovementStateType.Dash, new DashStateContext(_playerEntity.FacingDirection));
             }
         }
 

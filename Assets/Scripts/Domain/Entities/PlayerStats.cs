@@ -14,8 +14,9 @@ namespace Game.Domain.Entities
         public int AttackDamage { get; private set; }
         public float JumpForce { get; private set; }
         public float Gravity { get; private set; }
+        public float DashSpeed { get; private set; }
 
-        public PlayerStats(float speed, int maxHealth, int attackDamage, float jumpForce, float gravity)
+        public PlayerStats(float speed, int maxHealth, int attackDamage, float jumpForce, float gravity, float dashSpeed)
         {
             Speed = speed;
             MaxHealth = maxHealth;
@@ -23,9 +24,10 @@ namespace Game.Domain.Entities
             AttackDamage = attackDamage;
             JumpForce = jumpForce;
             Gravity = gravity;
+            DashSpeed = dashSpeed;
         }
 
-        private PlayerStats(float speed, int maxHealth, int currentHealth, int attackDamage, float jumpForce, float gravity)
+        private PlayerStats(float speed, int maxHealth, int currentHealth, int attackDamage, float jumpForce, float gravity, float dashSpeed)
         {
             Speed = speed;
             MaxHealth = maxHealth;
@@ -33,9 +35,10 @@ namespace Game.Domain.Entities
             AttackDamage = attackDamage;
             JumpForce = jumpForce;
             Gravity = gravity;
+            DashSpeed = dashSpeed;
         }
 
         public PlayerStats WithHealth(int newHealth)
-           => new PlayerStats(Speed, MaxHealth, newHealth, AttackDamage, JumpForce,Gravity);
+           => new PlayerStats(Speed, MaxHealth, newHealth, AttackDamage, JumpForce,Gravity, DashSpeed);
     }
 }

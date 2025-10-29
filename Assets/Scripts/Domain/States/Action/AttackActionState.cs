@@ -13,9 +13,9 @@ namespace Game.Domain.StateMachine
         readonly IActionStateMachine _machine;
         readonly IEventBus _eventBus;
         public ActionStateType StateType => ActionStateType.Attacking;
+        StateTimer _stateTimer;
         AttackType _currentAttack;
         float _attackDuration = 0.4f;//esto se cargaria de un abilitySystem y SOs
-        float _timer;
 
         public AttackActionState(PlayerEntity playerEntity, IActionStateMachine machine, IEventBus eventBus)
         {
@@ -31,7 +31,7 @@ namespace Game.Domain.StateMachine
             else
                 _currentAttack = AttackType.Light;
             Debug.Log("Enter action Attacking");
-            _timer = _attackDuration;
+            _stateTimer = new StateTimer(_attackDuration);
             _playerEntity.StartAttack();
             _eventBus.Publish(new PlayerAttackStarted(_playerEntity.Id, _currentAttack));
         }
@@ -46,8 +46,8 @@ namespace Game.Domain.StateMachine
 
         public void Update(float dt)
         {
-            _timer -= dt;
-            if (_timer <= 0f)
+            _stateTimer.Update(dt);
+            if (_stateTimer.IsFinished)
             {
                 _machine.ChangeState<IdleActionState>(ActionStateType.Idle);
             }

@@ -11,7 +11,7 @@ namespace Game.Core.Installers
         public static void Install(IContainer container)
         {
             container.RegisterSingleton<PlayerEntity>(new PlayerEntity(
-                new PlayerStats(5f, 100, 10,5f,5f),
+                new PlayerStats(5f, 100, 10,5f,5f, 3.5f),
                 container.Resolve<IEventBus>()));
 
             container.RegisterTransient(() =>

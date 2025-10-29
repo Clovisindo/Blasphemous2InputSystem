@@ -24,11 +24,13 @@ namespace Game.Domain.Entities
         public bool IsHurt { get; private set; }
         public bool IsDashing{ get; private set; }
         public bool IsDead { get; private set; }
+        public bool IsInvulnerable { get; private set; }
 
         public PlayerEntity(PlayerStats stats, IEventBus eventBus)
         {
             Stats = stats;
             _eventBus = eventBus;
+            IsInvulnerable = false;
         }
 
         public void Move (Vector2 direction, float deltaTime)
@@ -72,6 +74,23 @@ namespace Game.Domain.Entities
             // Simplificación: leer del controller o de colisiones por evento?
             if (Position.y <= 0)
                 IsGrounded = true;
+        }
+
+        public void Dash(Vector2 direction, float dashSpeed, float deltaTime)
+        {
+            direction.y = 0f;
+            direction.Normalize();
+
+            Position += direction * dashSpeed * deltaTime;//ToDo: hay que rehacer todos los movimientos con interpolacion
+            IsInvulnerable = true;
+            _eventBus.Publish(new PlayerMovement(Id, Position));
+        }
+
+        public void EndDash()
+        {
+            IsInvulnerable = false;
+            StopDash();
+            //_eventBus.Publish(new PlayerDashEnded(Id));
         }
 
 

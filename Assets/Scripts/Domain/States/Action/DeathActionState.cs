@@ -20,15 +20,9 @@ namespace Game.Domain.StateMachine
             _eventBus = eventBus;
         }
 
-        public void Enter(IStateContext context = null)
-        {
-            throw new NotImplementedException();
-        }
+        public void Enter(IStateContext context = null) { }
 
-        public void Exit()
-        {
-            throw new NotImplementedException();
-        }
+        public void Exit() { }
 
         public void HandleCommand(InputCommand cmd) { }
 

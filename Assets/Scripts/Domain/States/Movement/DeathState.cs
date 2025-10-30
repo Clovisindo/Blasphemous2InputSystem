@@ -22,7 +22,7 @@ namespace Game.Domain.StateMachine
 
         public void Enter(IStateContext context = null)
         {
-            Debug.Log("Enter Attacking");
+            Debug.Log("Enter Death state.");
             _playerEntity.StartDead();
         }
 

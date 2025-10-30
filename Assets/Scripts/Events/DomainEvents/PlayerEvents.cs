@@ -15,6 +15,18 @@ namespace Game.Events.PlayerEvents
                 PlayerId = id;
             }
         };
+
+        public readonly struct DamageIntentEvent : IApplicationEvent
+        {
+            public Guid TargetPlayerId { get; }
+            public int Damage { get; }
+            public float StunDuration { get; }
+            public GameObject Source { get; }
+
+            public DamageIntentEvent(Guid targetPlayerId, int damage, float stun, GameObject source) =>
+                (TargetPlayerId, Damage, StunDuration, Source) = (targetPlayerId, damage, stun, source);
+        }
+
         public readonly struct PlayerAttackStarted :IDomainEvent
         {
             public readonly Guid PlayerId;
@@ -59,11 +71,25 @@ namespace Game.Events.PlayerEvents
         {
             public readonly Guid PlayerId;
             public readonly int Damage;
-            public PlayerDamagedEvent(Guid id, int damage)
+            public bool IsDead { get; }
+            public PlayerDamagedEvent(Guid id, int damage, bool isDead)
             {
                 PlayerId = id;
                 Damage = damage;
+                IsDead = isDead;
             }
+        }
+
+        public readonly struct PlayerHurtStartedEvent : IDomainEvent
+        {
+            public readonly Guid PlayerId;
+            public PlayerHurtStartedEvent(Guid id) => PlayerId = id;
+        }
+
+        public readonly struct PlayerHurtEndedEvent : IDomainEvent
+        {
+            public readonly Guid PlayerId;
+            public PlayerHurtEndedEvent(Guid id) => PlayerId = id;
         }
 
         public readonly struct PlayerDiedEvent : IDomainEvent

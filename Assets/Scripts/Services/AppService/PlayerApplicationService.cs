@@ -1,9 +1,9 @@
 ﻿using Game.Domain.Entities;
+using Game.Domain.Services;
 using Game.Domain.StateMachine;
 using Game.Events;
 using Game.Input;
 using Game.Input.Commands;
-using System;
 using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
 using Debug = UnityEngine.Debug;
@@ -13,23 +13,21 @@ namespace Game.Services.Application
     public class PlayerApplicationService : IPlayerApplicationService
     {
         readonly PlayerStateMachine _stateMachines;
+        readonly PlayerDomainService _playerDomainService;
         readonly InputBuffer _buffer;
-        readonly PlayerEntity _entity;
+        readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
 
-        public PlayerApplicationService(PlayerStateMachine stateMachines, InputBuffer buffer, PlayerEntity entity, IEventBus bus)
+        public PlayerApplicationService(PlayerStateMachine stateMachines, PlayerDomainService playerDomainService, InputBuffer buffer, PlayerEntity playerEntity, IEventBus bus)
         {
             _stateMachines = stateMachines;
+            _playerDomainService = playerDomainService;
             _buffer = buffer;
-            _entity = entity;
+            _playerEntity = playerEntity;
             _eventBus = bus;
+            _eventBus.Subscribe<DamageIntentEvent>(OnDamageIntent);
             _eventBus.Subscribe<PlayerDamagedEvent>(OnPlayerDamaged);
             _eventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
-        }
-        public void Dispose()
-        {
-            _eventBus.Unsubscribe<PlayerDamagedEvent>(OnPlayerDamaged);
-            _eventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
         }
 
         public void ProcessInputCommands(InputCommand command, float deltaTime)
@@ -69,7 +67,7 @@ namespace Game.Services.Application
             }
             else
             {
-                _eventBus.Publish(new PlayerActionBlockedEvent(_entity.Id, ActionStateType.Attacking, moveState));
+                _eventBus.Publish(new PlayerActionBlockedEvent(_playerEntity.Id, ActionStateType.Attacking, moveState));
                 Debug.Log($" La accion  de atacar está bloqueada con el comando de movimiento : {moveState}");
             }
         }
@@ -78,9 +76,24 @@ namespace Game.Services.Application
         {
             _stateMachines.Update(deltaTime);
         }
+
+        private void OnDamageIntent(DamageIntentEvent intent)
+        {
+            if (intent.TargetPlayerId != _playerEntity.Id) return;
+
+            if (_playerEntity.IsInvulnerable)//comprobamos invulnerable, escudos, fuego amigo etc
+            {
+                //_eventBus.Publish(new playerDamageIgnored());
+                return;
+            }
+            _playerDomainService.ApplyDamage(_playerEntity, intent.Damage);//llamamos al app domain service para aplicar el daño
+            //podriamos aplicar aqui desde dominio, otros efectos como empujar que no van atados al daño
+            //Se puede forzar aqui el cambio de estado, pero mejor escuchar eventos invocados desde el dominio
+        }
+
         private void OnPlayerDied(PlayerDiedEvent evt)
         {
-            if (evt.PlayerId != _entity.Id) return;
+            if (evt.PlayerId != _playerEntity.Id) return;
 
             _stateMachines.Movement.ChangeState<DeathState>( MovementStateType.Death);
             _stateMachines.Action.ChangeState<DeathActionState>( ActionStateType.Death);
@@ -88,10 +101,17 @@ namespace Game.Services.Application
 
         private void OnPlayerDamaged(PlayerDamagedEvent evt)
         {
-            if (evt.PlayerId != _entity.Id) return;
-
+            if (evt.PlayerId != _playerEntity.Id) return;
+            
             _stateMachines.Movement.ChangeState<HurtState>( MovementStateType.Hurt);
             _stateMachines.Action.ChangeState<HurtActionState>( ActionStateType.Hurt);
+        }
+        
+        public void Dispose()
+        {
+            _eventBus.Unsubscribe<DamageIntentEvent>(OnDamageIntent);
+            _eventBus.Unsubscribe<PlayerDamagedEvent>(OnPlayerDamaged);
+            _eventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
         }
     }
 }

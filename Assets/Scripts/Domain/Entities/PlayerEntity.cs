@@ -42,12 +42,18 @@ namespace Game.Domain.Entities
             _eventBus.Publish(new PlayerMovement(Id, Position));
         }
 
-        public void TakeDamage(int amount)
+        public void TakeDamage(int newHealth)
         {
-            var newHealth = Mathf.Max(Stats.CurrentHealth - amount, 0);
             Stats = Stats.WithHealth(newHealth);
         }
 
+        //public void ApplyKnockback(Vector2 dir, float force)
+        //{
+        //    // Option: set a knockback velocity used by the movement FSM
+        //    KnockbackVelocity = dir.normalized * force;
+        //}
+
+        //ToDo: llevarse estos metodos y publicar eventos al PlayerDomainService
         public void Jump()
         {
             IsGrounded = false;

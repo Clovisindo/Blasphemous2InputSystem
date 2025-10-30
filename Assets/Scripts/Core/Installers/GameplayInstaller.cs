@@ -1,4 +1,5 @@
 ﻿using Game.Domain.Entities;
+using Game.Domain.Services;
 using Game.Domain.StateMachine;
 using Game.Events;
 using Game.Input;
@@ -18,10 +19,13 @@ namespace Game.Core.Installers
             new PlayerStateMachine(container.Resolve<PlayerEntity>() ,
             container.Resolve<IEventBus>()
             ));
+            container.RegisterSingleton<PlayerDomainService>(
+                new PlayerDomainService(container.Resolve<IEventBus>()));
             
             container.RegisterSingleton<IPlayerApplicationService>(
                 new PlayerApplicationService(
                     container.Resolve<PlayerStateMachine>(),
+                    container.Resolve<PlayerDomainService>(),
                     container.Resolve<InputBuffer>(),
                     container.Resolve<PlayerEntity>(),
                     container.Resolve<IEventBus>()

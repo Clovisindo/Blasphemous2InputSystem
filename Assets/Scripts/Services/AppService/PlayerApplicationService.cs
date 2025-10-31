@@ -86,9 +86,7 @@ namespace Game.Services.Application
                 //_eventBus.Publish(new playerDamageIgnored());
                 return;
             }
-            _playerDomainService.ApplyDamage(_playerEntity, intent.Damage);//llamamos al app domain service para aplicar el daño
-            //podriamos aplicar aqui desde dominio, otros efectos como empujar que no van atados al daño
-            //Se puede forzar aqui el cambio de estado, pero mejor escuchar eventos invocados desde el dominio
+            _playerDomainService.ApplyDamage(_playerEntity, intent.Damage, intent.KnockbackDirection);//llamamos al app domain service para aplicar el daño
         }
 
         private void OnPlayerDied(PlayerDiedEvent evt)
@@ -96,15 +94,14 @@ namespace Game.Services.Application
             if (evt.PlayerId != _playerEntity.Id) return;
 
             _stateMachines.Movement.ChangeState<DeathState>( MovementStateType.Death);
-            _stateMachines.Action.ChangeState<DeathActionState>( ActionStateType.Death);
+            //_stateMachines.Action.ChangeState<DeathActionState>( ActionStateType.Death);
         }
 
         private void OnPlayerDamaged(PlayerDamagedEvent evt)
         {
             if (evt.PlayerId != _playerEntity.Id) return;
-            
-            _stateMachines.Movement.ChangeState<HurtState>( MovementStateType.Hurt);
-            _stateMachines.Action.ChangeState<HurtActionState>( ActionStateType.Hurt);
+
+            _stateMachines.Action.ChangeState<HurtActionState>(ActionStateType.Hurt);//ToDo: de momento no se usan , pendiente eliminar
         }
         
         public void Dispose()

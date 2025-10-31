@@ -28,8 +28,8 @@ namespace Game.Application
             _eventBus.Subscribe<PlayerAttackFinished>(OnAttackFinished);
             _eventBus.Subscribe<PlayerMovement>(OnMoved);
             _eventBus.Subscribe<PlayerDamagedEvent>(OnDamaged);
-            _eventBus.Subscribe<PlayerHurtStartedEvent>(OnHurtStarted);
-            _eventBus.Subscribe<PlayerHurtEndedEvent>(OnHurtEnded);
+            _eventBus.Subscribe<PlayerHurtAnimStart>(OnHurtStarted);
+            _eventBus.Subscribe<PlayerHurtAnimEnd>(OnHurtEnded);
         }
 
         private void OnDamaged(PlayerDamagedEvent evt)
@@ -39,13 +39,13 @@ namespace Game.Application
             //SFX, camera shake, particles...
         }
 
-        private void OnHurtEnded(PlayerHurtEndedEvent evt)
+        private void OnHurtEnded(PlayerHurtAnimEnd evt)
         {
             if (evt.PlayerId != _playerId) return;
             //_anim.SetBool("IsHurt", true);
         }
 
-        private void OnHurtStarted(PlayerHurtStartedEvent evt)
+        private void OnHurtStarted(PlayerHurtAnimStart evt)
         {
             if (evt.PlayerId != _playerId) return;
             //_anim.SetBool("IsHurt", false);
@@ -57,8 +57,8 @@ namespace Game.Application
             _eventBus.Unsubscribe<PlayerAttackFinished>(OnAttackFinished);
             _eventBus.Unsubscribe<PlayerMovement>(OnMoved);
             _eventBus.Unsubscribe<PlayerDamagedEvent>(OnDamaged);
-            _eventBus.Unsubscribe<PlayerHurtStartedEvent>(OnHurtStarted);
-            _eventBus.Unsubscribe<PlayerHurtEndedEvent>(OnHurtEnded);
+            _eventBus.Unsubscribe<PlayerHurtAnimStart>(OnHurtStarted);
+            _eventBus.Unsubscribe<PlayerHurtAnimEnd>(OnHurtEnded);
         }
 
         private void OnAttackStarted(PlayerAttackStarted evt)

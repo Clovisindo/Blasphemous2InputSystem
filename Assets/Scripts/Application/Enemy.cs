@@ -27,7 +27,8 @@ namespace Game.Application.Enemies
             var view = other.GetComponent<PlayerView>();
             if (view == null) { return; }
 
-            var intent = new DamageIntentEvent(view.GetPlayerId(), damage, stun, gameObject);
+            var direction = (view.transform.position - transform.position).normalized;
+            var intent = new DamageIntentEvent(view.GetPlayerId(), damage, stun, direction, gameObject);//editando este evento y extendiendo los enemigos, podriamos hacer distintos tipos de daño, resistencias en dominio segun el daño,etc
             _eventBus.Publish(intent);
         }
     }

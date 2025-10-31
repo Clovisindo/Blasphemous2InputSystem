@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Game.Domain.Entities
 {
@@ -15,8 +16,9 @@ namespace Game.Domain.Entities
         public float JumpForce { get; private set; }
         public float Gravity { get; private set; }
         public float DashSpeed { get; private set; }
+        public float KnockbackForce { get; private set; }
 
-        public PlayerStats(float speed, int maxHealth, int attackDamage, float jumpForce, float gravity, float dashSpeed)
+        public PlayerStats(float speed, int maxHealth, int attackDamage, float jumpForce, float gravity, float dashSpeed, float knockbackForce)
         {
             Speed = speed;
             MaxHealth = maxHealth;
@@ -25,9 +27,10 @@ namespace Game.Domain.Entities
             JumpForce = jumpForce;
             Gravity = gravity;
             DashSpeed = dashSpeed;
+            KnockbackForce = knockbackForce;
         }
 
-        private PlayerStats(float speed, int maxHealth, int currentHealth, int attackDamage, float jumpForce, float gravity, float dashSpeed)
+        private PlayerStats(float speed, int maxHealth, int currentHealth, int attackDamage, float jumpForce, float gravity, float dashSpeed, float knockbackForce)
         {
             Speed = speed;
             MaxHealth = maxHealth;
@@ -36,9 +39,10 @@ namespace Game.Domain.Entities
             JumpForce = jumpForce;
             Gravity = gravity;
             DashSpeed = dashSpeed;
+            KnockbackForce = knockbackForce;
         }
 
         public PlayerStats WithHealth(int newHealth)
-           => new PlayerStats(Speed, MaxHealth, newHealth, AttackDamage, JumpForce,Gravity, DashSpeed);
+           => new PlayerStats(Speed, MaxHealth, newHealth, AttackDamage, JumpForce,Gravity, DashSpeed, KnockbackForce);
     }
 }

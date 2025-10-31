@@ -2,6 +2,7 @@
 using Game.Settings;
 using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static Game.Events.PlayerEvents.PlayerEvents;
 
 namespace Game.Domain.Entities
@@ -12,8 +13,10 @@ namespace Game.Domain.Entities
     public class PlayerEntity
     {
         public Guid Id { get; } = Guid.NewGuid();
+        public PlayerCapabilitySet Capabilities { get; } = new();
         public Vector2 Position { get;private set; }
         public Vector2 FacingDirection { get; private set; } = Vector2.right;
+        public Vector2 KnockbackVelocity { get; private set; }
         public PlayerStats Stats { get; private set; }
         public float VerticalVelocity { get; private set; }
         readonly IEventBus _eventBus;
@@ -25,6 +28,7 @@ namespace Game.Domain.Entities
         public bool IsDashing{ get; private set; }
         public bool IsDead { get; private set; }
         public bool IsInvulnerable { get; private set; }
+        
 
         public PlayerEntity(PlayerStats stats, IEventBus eventBus)
         {
@@ -35,6 +39,8 @@ namespace Game.Domain.Entities
 
         public void Move (Vector2 direction, float deltaTime)
         {
+            if (!Capabilities.Has(Capability.Move)) return;
+
             float horizontalMove = direction.x;
             Position += deltaTime * horizontalMove * Stats.Speed * Vector2.right;
             if (horizontalMove != 0)
@@ -47,11 +53,16 @@ namespace Game.Domain.Entities
             Stats = Stats.WithHealth(newHealth);
         }
 
-        //public void ApplyKnockback(Vector2 dir, float force)
-        //{
-        //    // Option: set a knockback velocity used by the movement FSM
-        //    KnockbackVelocity = dir.normalized * force;
-        //}
+        public void SetKnockback(Vector2 direction, float force)
+        {
+            KnockbackVelocity = direction.normalized * force;
+        }
+
+        public void ApplyKnockback(float deltaTime)
+        {
+            Position += KnockbackVelocity.x * deltaTime * Vector2.right;
+            _eventBus.Publish(new PlayerMovement(Id, Position));
+        }
 
         //ToDo: llevarse estos metodos y publicar eventos al PlayerDomainService
         public void Jump()
@@ -88,15 +99,7 @@ namespace Game.Domain.Entities
             direction.Normalize();
 
             Position += direction * dashSpeed * deltaTime;//ToDo: hay que rehacer todos los movimientos con interpolacion
-            IsInvulnerable = true;
             _eventBus.Publish(new PlayerMovement(Id, Position));
-        }
-
-        public void EndDash()
-        {
-            IsInvulnerable = false;
-            StopDash();
-            //_eventBus.Publish(new PlayerDashEnded(Id));
         }
 
 
@@ -104,10 +107,28 @@ namespace Game.Domain.Entities
         public void StopAttack() => IsAttacking = false;
         public void StartClimb() => IsClimbing = true;
         public void StopClimb() => IsClimbing = false;
-        public void StartHurt() => IsHurt = true;
-        public void StopHurt() => IsHurt = false;
-        public void StartDash() => IsDashing = true;
-        public void StopDash() => IsDashing = false;
+        public void StartHurt()
+        {
+            IsHurt = true;
+            IsInvulnerable = true;
+        }
+        public void StopHurt()
+        {
+            IsHurt = false;
+            IsInvulnerable = false;
+        }
+        public void StartDash()
+        {
+            IsDashing = true;
+            IsInvulnerable = true;
+
+        }
+        public void StopDash()
+        {
+            IsDashing = false;
+            IsInvulnerable = false;
+            //_eventBus.Publish(new PlayerDashEnded(Id));
+        }
         public void StartDead() => IsDead = true;
         public void StopDead() => IsDead = false;
     }

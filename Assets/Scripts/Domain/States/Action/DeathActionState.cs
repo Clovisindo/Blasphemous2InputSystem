@@ -19,7 +19,7 @@ namespace Game.Domain.StateMachine
             _machine = machine;
             _eventBus = eventBus;
         }
-
+        //Aqui podría ir logica de cancelacion de animaciones de ataque, o gestionar parrys, inmunidades o casos especiales
         public void Enter(IStateContext context = null) { }
 
         public void Exit() { }

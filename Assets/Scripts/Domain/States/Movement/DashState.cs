@@ -46,7 +46,7 @@ namespace Game.Domain.StateMachine
 
             if (_timer.IsFinished)
             {
-                _playerEntity.EndDash();
+                _playerEntity.StopDash();
                 _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
             }
         }

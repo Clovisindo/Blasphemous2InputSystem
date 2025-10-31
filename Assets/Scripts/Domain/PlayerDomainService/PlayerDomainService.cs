@@ -17,12 +17,13 @@ namespace Game.Domain.Services
             _eventBus = eventBus;
         }
 
-        public void ApplyDamage(PlayerEntity player, int damage)
+        public void ApplyDamage(PlayerEntity player, int damage, Vector2 knockbackDir)
         {
             if (player.IsInvulnerable) return;
 
             var newHealth = Mathf.Max(player.Stats.CurrentHealth - damage, 0);
             player.TakeDamage(newHealth);
+            player.SetKnockback(knockbackDir, player.Stats.KnockbackForce);
 
             var isDead = newHealth == 0;
 

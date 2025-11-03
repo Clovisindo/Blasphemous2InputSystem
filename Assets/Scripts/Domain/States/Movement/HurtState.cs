@@ -23,7 +23,10 @@ namespace Game.Domain.StateMachine
             _eventBus = eventBus;
         }
 
-        public void Enter(IStateContext context = null) { }
+        public void Enter(IStateContext context = null) 
+        {
+            _eventBus.Publish(new PlayerUpdateMoveStateView(_playerEntity.Id, StateType));
+        }
 
         public void HandleCommand(InputCommand cmd) { }
 

@@ -3,6 +3,7 @@ using Game.Events;
 using Game.Input.Commands;
 using System;
 using UnityEngine;
+using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
 
 namespace Game.Domain.StateMachine
@@ -28,6 +29,7 @@ namespace Game.Domain.StateMachine
         public void Enter(IStateContext context = null)
         {
             Debug.Log("Enter Dash State.");
+            _eventBus.Publish(new PlayerUpdateMoveStateView(_playerEntity.Id, StateType));
 
             if (context is IStateContext<DashContextData> dashCtx)
                 _direction = dashCtx.Data.Direction;

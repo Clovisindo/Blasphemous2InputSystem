@@ -109,8 +109,8 @@ namespace Game.Events.PlayerEvents
                 Amount = amount;
             }
         }
-        
-         public readonly struct PlayerActionBlockedEvent : IDomainEvent
+
+        public readonly struct PlayerActionBlockedEvent : IDomainEvent
         {
             public readonly Guid PlayerId;
             public readonly ActionStateType ActionStateType;
@@ -120,6 +120,30 @@ namespace Game.Events.PlayerEvents
                 PlayerId = playerId;
                 ActionStateType = actionStateType;
                 CurrentMoveStateType = currentMoveStateType;
+            }
+        }
+
+        public readonly struct PlayerUpdateMoveStateView : IApplicationEvent
+        {
+            public readonly Guid PlayerId;
+            public readonly MovementStateType MovementStateType;
+
+            public PlayerUpdateMoveStateView(Guid playerId, MovementStateType movementStateType)
+            {
+                PlayerId = playerId;
+                MovementStateType = movementStateType;
+            }
+        }
+
+        public readonly struct PlayerUpdateActionStateView : IApplicationEvent
+        {
+            public readonly Guid PlayerId;
+            public readonly ActionStateType ActionStateType;
+
+            public PlayerUpdateActionStateView(Guid playerId, ActionStateType actionStateType)
+            {
+                PlayerId = playerId;
+                ActionStateType = actionStateType;
             }
         }
     }

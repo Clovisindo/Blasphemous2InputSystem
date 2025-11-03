@@ -2,6 +2,7 @@
 using Game.Events;
 using Game.Input.Commands;
 using UnityEngine;
+using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
 
 namespace Game.Domain.StateMachine
@@ -23,6 +24,7 @@ namespace Game.Domain.StateMachine
         public void Enter(IStateContext context = null) 
         {
             Debug.Log("Enter Action idle.");
+            _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
         }
 
         public void Exit() { }

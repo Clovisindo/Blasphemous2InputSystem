@@ -2,6 +2,7 @@
 using Game.Events;
 using Game.Input.Commands;
 using UnityEngine;
+using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
 
 namespace Game.Domain.StateMachine
@@ -24,6 +25,7 @@ namespace Game.Domain.StateMachine
         public void Enter(IStateContext context = null)
         {
             Debug.Log("Enter Moving state.");
+            _eventBus.Publish(new PlayerUpdateMoveStateView(_playerEntity.Id, StateType));
             //_eventBus.Publish(new PlayerStartedMovingEvent(_entity.Id));
         }
 

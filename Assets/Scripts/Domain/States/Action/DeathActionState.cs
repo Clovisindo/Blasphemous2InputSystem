@@ -2,6 +2,7 @@
 using Game.Events;
 using Game.Input.Commands;
 using System;
+using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
 
 namespace Game.Domain.StateMachine
@@ -20,7 +21,10 @@ namespace Game.Domain.StateMachine
             _eventBus = eventBus;
         }
         //Aqui podría ir logica de cancelacion de animaciones de ataque, o gestionar parrys, inmunidades o casos especiales
-        public void Enter(IStateContext context = null) { }
+        public void Enter(IStateContext context = null)
+        {
+            _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
+        }
 
         public void Exit() { }
 

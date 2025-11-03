@@ -31,6 +31,7 @@ namespace Game.Domain.StateMachine
             else
                 _currentAttack = AttackType.Light;
             Debug.Log("Enter action Attacking");
+            _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
             _stateTimer = new StateTimer(_attackDuration);
             _playerEntity.StartAttack();
             _eventBus.Publish(new PlayerAttackStarted(_playerEntity.Id, _currentAttack));

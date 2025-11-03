@@ -27,6 +27,7 @@ namespace Game.Domain.StateMachine
         public void Enter(IStateContext context = null)
         {
             Debug.Log("Enter hurt action State.");
+            _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
             _playerEntity.Capabilities.Disable(Capability.Move);
             _eventBus.Publish(new PlayerHurtAnimStart(_playerEntity.Id));
             _timer = new StateTimer(0.5f);

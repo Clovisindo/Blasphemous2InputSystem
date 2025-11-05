@@ -1,7 +1,10 @@
 ﻿using Game.Domain.Entities;
+using Game.Domain.StateMachine;
 using Game.Events;
+using UnityEditor;
 using UnityEngine;
 using static Game.Events.PlayerEvents.PlayerEvents;
+using static Utilities;
 
 namespace Game.Domain.Services
 {
@@ -17,29 +20,48 @@ namespace Game.Domain.Services
             _eventBus = eventBus;
         }
 
-        public void ApplyDamage(PlayerEntity player, int damage, Vector2 knockbackDir)
+        public void ApplyDamage(PlayerEntity player, MovementStateType currentMoveStateType, int damage, Vector2 knockbackDir)
         {
             if (player.IsInvulnerable) return;
 
+            if (!PlayerStateRules.CanCombine(currentMoveStateType, ActionStateType.Hurt))// reglas entre move y action
+            {
+                BlockAction(player, ActionStateType.Hurt, currentMoveStateType);
+            }
+            HandleDamage(player,currentMoveStateType,damage, knockbackDir);
+
+        }
+        private void HandleDamage(PlayerEntity player, MovementStateType currentMoveStateType, int damage, Vector2 knockbackDir)
+        {
             var newHealth = Mathf.Max(player.Stats.CurrentHealth - damage, 0);
             player.TakeDamage(newHealth);
             player.SetKnockback(knockbackDir, player.Stats.KnockbackForce);
 
             var isDead = newHealth == 0;
 
-            //avisa appservice para cambiar la maquina de estados
-            _eventBus.Publish(new PlayerDamagedEvent(player.Id,damage,isDead));
+            _eventBus.Publish(new PlayerDamagedEvent(player.Id, damage, isDead));
 
             if (isDead)
+                HandleDeath(player, currentMoveStateType);
+            else
+                player.StartHurt();
+        }
+
+        private void HandleDeath(PlayerEntity player, MovementStateType currentMoveStateType)
+        {
+            if (PlayerStateRules.CanCombine(currentMoveStateType, ActionStateType.Death))
             {
                 player.StartDead();
                 _eventBus.Publish(new PlayerDiedEvent(player.Id));
             }
             else
-            {
-                player.StartHurt();//?? revisar estas cargas
-            }
+                BlockAction(player, ActionStateType.Hurt, currentMoveStateType);
+        }
 
+        private void BlockAction(PlayerEntity player, ActionStateType actionType, MovementStateType moveState)
+        {
+            _eventBus.Publish(new PlayerActionBlockedEvent(player.Id, actionType, moveState));
+            Debug.Log($"La acción {actionType} está bloqueada con el comando de movimiento: {moveState}");
         }
     }
 }

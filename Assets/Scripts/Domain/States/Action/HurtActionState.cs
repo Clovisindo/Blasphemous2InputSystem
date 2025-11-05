@@ -28,15 +28,18 @@ namespace Game.Domain.StateMachine
         {
             Debug.Log("Enter hurt action State.");
             _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
-            _playerEntity.Capabilities.Disable(Capability.Move);
+
+            DisableMovement();
             _eventBus.Publish(new PlayerHurtAnimStart(_playerEntity.Id));
-            _timer = new StateTimer(0.5f);
+            _timer = new StateTimer(2f);
             _playerEntity.StartHurt();
         }
 
+       
+
         public void Exit() 
         {
-            _playerEntity.Capabilities.Enable(Capability.Move);
+            EnableMovement();
         }
 
         public void HandleCommand(InputCommand cmd) { }
@@ -45,7 +48,7 @@ namespace Game.Domain.StateMachine
         {
             _timer.Update(dt);
             _playerEntity.ApplyKnockback(dt);
-            _playerEntity.SetKnockback(_playerEntity.KnockbackVelocity * KNOCKBACK_RESISTENCE, _playerEntity.Stats.KnockbackForce);//falta direcion desde el contexto
+            _playerEntity.SetKnockback(_playerEntity.KnockbackVelocity * KNOCKBACK_RESISTENCE, _playerEntity.Stats.KnockbackForce);
 
             if (_timer.IsFinished)
             {
@@ -53,6 +56,20 @@ namespace Game.Domain.StateMachine
                 _eventBus.Publish(new PlayerHurtAnimEnd(_playerEntity.Id));
                 _stateMachine.ChangeState<IdleActionState>(ActionStateType.Idle);
             }
+        }
+
+        private void DisableMovement()
+        {
+            _playerEntity.Capabilities.Disable(Capability.Move);
+            _playerEntity.Capabilities.Disable(Capability.Jump);
+            _playerEntity.Capabilities.Disable(Capability.Dash);
+        }
+
+        private void EnableMovement()
+        {
+            _playerEntity.Capabilities.Enable(Capability.Move);
+            _playerEntity.Capabilities.Enable(Capability.Jump);
+            _playerEntity.Capabilities.Enable(Capability.Dash);
         }
     }
 }

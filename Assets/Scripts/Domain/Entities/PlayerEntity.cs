@@ -39,7 +39,8 @@ namespace Game.Domain.Entities
 
         public void Move (Vector2 direction, float deltaTime)
         {
-            if (!Capabilities.Has(Capability.Move)) return;
+            if (!Capabilities.Has(Capability.Move)) 
+                return;
 
             float horizontalMove = direction.x;
             Position += deltaTime * horizontalMove * Stats.Speed * Vector2.right;
@@ -67,6 +68,9 @@ namespace Game.Domain.Entities
         //ToDo: llevarse estos metodos y publicar eventos al PlayerDomainService
         public void Jump()
         {
+            if (!Capabilities.Has(Capability.Move))
+                return;
+
             IsGrounded = false;
             VerticalVelocity = Stats.JumpForce;
             _eventBus.Publish( new PlayerJumpStartedEvent(Id, Stats.JumpForce));
@@ -95,6 +99,9 @@ namespace Game.Domain.Entities
 
         public void Dash(Vector2 direction, float dashSpeed, float deltaTime)
         {
+            if (!Capabilities.Has(Capability.Dash))
+                return;
+
             direction.y = 0f;
             direction.Normalize();
 

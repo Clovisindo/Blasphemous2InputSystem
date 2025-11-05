@@ -25,7 +25,6 @@ namespace Game.Domain.StateMachine
             _states[typeof(IdleActionState)] = new IdleActionState(_playerEntity, this, _eventBus);
             _states[typeof(AttackActionState)] = new AttackActionState(_playerEntity, this, _eventBus);
             _states[typeof(HurtActionState)] = new HurtActionState(_playerEntity, this, _eventBus);
-            _states[typeof(DashActionState)] = new DashActionState(_playerEntity, this, _eventBus);
             _states[typeof(DeathActionState)] = new DeathActionState(_playerEntity, this, _eventBus);
 
 

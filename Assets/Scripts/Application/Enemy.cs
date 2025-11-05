@@ -28,14 +28,6 @@ namespace Game.Application.Enemies
             _eventBus = Bootstrapper.Container.Resolve<IEventBus>();
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            var view = other.GetComponent<PlayerView>();
-            if (view == null) { return; }
-
-            InvokeDamageIntent(view);
-        }
-
         private void OnTriggerStay2D(Collider2D other)
         {
             time_last_damage += Time.deltaTime;
@@ -50,7 +42,6 @@ namespace Game.Application.Enemies
             if (time_last_damage >= nextTime)
             {
                 InvokeDamageIntent(view);
-
                 _nextAllowedHit[id] = damageInterval;
                 time_last_damage = 0f;
             }
@@ -69,7 +60,7 @@ namespace Game.Application.Enemies
         /// <param name="view"></param>
         private void InvokeDamageIntent(PlayerView view)
         {
-            var direction = (view.transform.position - transform.position).normalized;
+            var direction = (view.transform.position.x - transform.position.x) >= 0 ? Vector2.right : Vector2.left;
             var intent = new DamageIntentEvent(view.GetPlayerId(), damage, stun, direction, gameObject);//editando este evento y extendiendo los enemigos, podriamos hacer distintos tipos de daño, resistencias en dominio segun el daño,etc
             _eventBus.Publish(intent);
         }

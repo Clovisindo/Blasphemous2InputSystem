@@ -15,13 +15,10 @@ namespace Game.Domain.StateMachine
         private static readonly Dictionary<MovementStateType, MovementStateType[]> _allowedTransitions =
             new()
             {
-            { MovementStateType.Idle, new[] { MovementStateType.Moving, MovementStateType.Jumping, MovementStateType.Dash,MovementStateType.Hurt,MovementStateType.Death } },
-            { MovementStateType.Moving, new[] { MovementStateType.Idle, MovementStateType.Jumping, MovementStateType.Dash,MovementStateType.Hurt,MovementStateType.Death } },
-            { MovementStateType.Jumping, new []{MovementStateType.Idle,MovementStateType.Moving,MovementStateType.Hurt,MovementStateType.Death } },
-            { MovementStateType.Climb, new []{MovementStateType.Jumping,MovementStateType.Hurt,MovementStateType.Death } },
-            { MovementStateType.Dash, new []{ MovementStateType.Idle, MovementStateType.Moving, MovementStateType.Jumping,MovementStateType.Hurt,MovementStateType.Death } },
-            { MovementStateType.Hurt, new []{ MovementStateType.Idle, MovementStateType.Moving, MovementStateType.Jumping, MovementStateType.Climb, MovementStateType.Death } },
-            { MovementStateType.Death, Array.Empty<MovementStateType>() }
+            { MovementStateType.Idle, new[] { MovementStateType.Moving, MovementStateType.Jumping, MovementStateType.Dash } },
+            { MovementStateType.Moving, new[] { MovementStateType.Idle, MovementStateType.Jumping, MovementStateType.Dash } },
+            { MovementStateType.Jumping, new []{MovementStateType.Idle,MovementStateType.Moving } },
+            { MovementStateType.Dash, new []{ MovementStateType.Idle, MovementStateType.Moving, MovementStateType.Jumping } },
             };
 
         public static bool CanTransition(MovementStateType from, MovementStateType to)

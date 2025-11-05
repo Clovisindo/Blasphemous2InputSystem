@@ -26,8 +26,6 @@ namespace Game.Domain.StateMachine
             _states[typeof(JumpState)] = new JumpState(_playerEntity, this, eventBus);
             _states[typeof(ClimbState)] = new ClimbState(_playerEntity, this, eventBus);
             _states[typeof(DashState)] = new DashState(_playerEntity, this, eventBus);
-            _states[typeof(DeathState)] = new DeathState(_playerEntity, this, eventBus);
-            _states[typeof(HurtState)] = new HurtState(_playerEntity, this, eventBus);
 
             _current = _states[typeof(IdleState)];
             _current.Enter();

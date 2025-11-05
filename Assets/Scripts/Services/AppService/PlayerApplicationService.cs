@@ -86,22 +86,21 @@ namespace Game.Services.Application
                 //_eventBus.Publish(new playerDamageIgnored());
                 return;
             }
-            _playerDomainService.ApplyDamage(_playerEntity, intent.Damage, intent.KnockbackDirection);//llamamos al app domain service para aplicar el daño
+            var currentMoveState = _stateMachines.Movement.CurrentStateType;
+            _playerDomainService.ApplyDamage(_playerEntity, currentMoveState, intent.Damage, intent.KnockbackDirection);//llamamos al app domain service para aplicar el daño
         }
 
         private void OnPlayerDied(PlayerDiedEvent evt)
         {
             if (evt.PlayerId != _playerEntity.Id) return;
-
-            _stateMachines.Movement.ChangeState<DeathState>( MovementStateType.Death);
-            //_stateMachines.Action.ChangeState<DeathActionState>( ActionStateType.Death);
+            _stateMachines.Action.ChangeState<DeathActionState>(ActionStateType.Death);
         }
 
         private void OnPlayerDamaged(PlayerDamagedEvent evt)
         {
             if (evt.PlayerId != _playerEntity.Id) return;
 
-            _stateMachines.Action.ChangeState<HurtActionState>(ActionStateType.Hurt);//ToDo: de momento no se usan , pendiente eliminar
+            _stateMachines.Action.ChangeState<HurtActionState>(ActionStateType.Hurt);
         }
         
         public void Dispose()

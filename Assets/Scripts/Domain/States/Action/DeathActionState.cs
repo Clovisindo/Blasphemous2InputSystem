@@ -2,6 +2,7 @@
 using Game.Events;
 using Game.Input.Commands;
 using System;
+using UnityEngine;
 using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
 
@@ -23,6 +24,8 @@ namespace Game.Domain.StateMachine
         //Aqui podría ir logica de cancelacion de animaciones de ataque, o gestionar parrys, inmunidades o casos especiales
         public void Enter(IStateContext context = null)
         {
+            Debug.Log("Enter death action State.");
+            DisableMovement();
             _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
         }
 
@@ -31,5 +34,12 @@ namespace Game.Domain.StateMachine
         public void HandleCommand(InputCommand cmd) { }
 
         public void Update(float dt) { }
+
+        private void DisableMovement()
+        {
+            _playerEntity.Capabilities.Disable(Capability.Move);
+            _playerEntity.Capabilities.Disable(Capability.Jump);
+            _playerEntity.Capabilities.Disable(Capability.Dash);
+        }
     }
 }

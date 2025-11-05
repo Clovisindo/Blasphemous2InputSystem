@@ -1,33 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using static Utilities;
 
 namespace Game.Domain.StateMachine
 {
     public static class PlayerStateRules
     {
+        //ahora mismo le estamos dando el uso a estas reglas de comprobar cuando entra el estado action
+        //no sirve para mientras esta el estado action haciendose, comprobar los otros cambios de move
+        //Entendemos que queremos que haya algunos movimientos y transiciones, y si no usamos los capables para limitarlo
         private static readonly Dictionary<(MovementStateType, ActionStateType), bool> _rules = new()
         {
             // attack rules
             {(MovementStateType.Idle, ActionStateType.Attacking), true},
             {(MovementStateType.Moving, ActionStateType.Attacking), true},
             {(MovementStateType.Jumping,ActionStateType.Attacking), true}, // air attack allowed
-            {(MovementStateType.Falling,ActionStateType.Attacking), true},
             {(MovementStateType.Climb, ActionStateType.Attacking), false},
             {(MovementStateType.Dash,  ActionStateType.Attacking), false},
-            {(MovementStateType.Hurt,  ActionStateType.Attacking), false},
             {(MovementStateType.Death, ActionStateType.Attacking), false},
 
-             // dash rules
-            {(MovementStateType.Idle, ActionStateType.Dashing), true},
-            {(MovementStateType.Moving, ActionStateType.Dashing), true},
-            {(MovementStateType.Jumping, ActionStateType.Dashing), false},
-            {(MovementStateType.Climb, ActionStateType.Dashing), false},
-            {(MovementStateType.Death, ActionStateType.Dashing), false},
-            {(MovementStateType.Hurt, ActionStateType.Dashing), false},
+             // hurt rules
+            {(MovementStateType.Idle, ActionStateType.Hurt), true},
+            {(MovementStateType.Moving, ActionStateType.Hurt), true},
+            {(MovementStateType.Jumping,ActionStateType.Hurt), true},
+            {(MovementStateType.Climb, ActionStateType.Hurt), true},
+            {(MovementStateType.Dash,  ActionStateType.Hurt), false},
+
+             // hurt rules
+            {(MovementStateType.Idle, ActionStateType.Death), true},
+            {(MovementStateType.Moving, ActionStateType.Death), true},
+            {(MovementStateType.Jumping,ActionStateType.Death), true},
+            {(MovementStateType.Climb, ActionStateType.Death), true},
+            {(MovementStateType.Dash,  ActionStateType.Death), true},
         };
 
         public static bool CanCombine(MovementStateType move, ActionStateType action)

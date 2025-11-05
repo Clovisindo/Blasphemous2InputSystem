@@ -29,7 +29,6 @@ namespace Game.Application
         { MovementStateType.Idle, Color.white },
         { MovementStateType.Moving, Color.green },
         { MovementStateType.Jumping, Color.yellow },
-        { MovementStateType.Hurt, Color.red },
         { MovementStateType.Dash, Color.cyan },
         { MovementStateType.Death, Color.black },
     };

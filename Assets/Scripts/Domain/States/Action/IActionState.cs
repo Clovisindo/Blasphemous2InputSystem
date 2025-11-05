@@ -15,9 +15,9 @@ namespace Game.Domain.StateMachine
         private static readonly Dictionary<ActionStateType, ActionStateType[]> _allowedTransitions =
             new()
             {
-            { ActionStateType.Idle, new[] { ActionStateType.Attacking, ActionStateType.Dashing, ActionStateType.Hurt } },
+            { ActionStateType.Idle, new[] { ActionStateType.Attacking, ActionStateType.Hurt } },
             { ActionStateType.Attacking, new[] { ActionStateType.Idle, ActionStateType.Hurt } },
-            { ActionStateType.Hurt, new[] { ActionStateType.Idle, ActionStateType.Death } },
+            { ActionStateType.Hurt, new[] { ActionStateType.Idle, ActionStateType.Attacking, ActionStateType.Death } },
             { ActionStateType.Death, Array.Empty<ActionStateType>() },
             };
 

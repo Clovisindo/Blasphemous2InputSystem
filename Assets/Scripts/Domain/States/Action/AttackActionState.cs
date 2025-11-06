@@ -32,15 +32,14 @@ namespace Game.Domain.StateMachine
                 _currentAttack = AttackType.Light;
             Debug.Log("Enter action Attacking");
             _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
+
             _stateTimer = new StateTimer(_attackDuration);
-            _playerEntity.StartAttack();
-            _eventBus.Publish(new PlayerAttackStarted(_playerEntity.Id, _currentAttack));
+            _playerEntity.Combat.StartAttack(_currentAttack);
         }
 
         public void Exit() 
         {
-            _eventBus.Publish(new PlayerAttackFinished(_playerEntity.Id));
-            _playerEntity.StopAttack();
+            _playerEntity.Combat.StopAttack();
         }
 
         public void HandleCommand(InputCommand cmd) { }//durante ataque no procesamos otros actions inputs

@@ -1,7 +1,6 @@
 ﻿using Game.Domain.Entities;
 using Game.Domain.StateMachine;
 using Game.Events;
-using UnityEditor;
 using UnityEngine;
 using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
@@ -22,7 +21,7 @@ namespace Game.Domain.Services
 
         public void ApplyDamage(PlayerEntity player, MovementStateType currentMoveStateType, int damage, Vector2 knockbackDir)
         {
-            if (player.IsInvulnerable) return;
+            if (player.Flags.IsInvulnerable) return;
 
             if (!PlayerStateRules.CanCombine(currentMoveStateType, ActionStateType.Hurt))// reglas entre move y action
             {
@@ -34,8 +33,8 @@ namespace Game.Domain.Services
         private void HandleDamage(PlayerEntity player, MovementStateType currentMoveStateType, int damage, Vector2 knockbackDir)
         {
             var newHealth = Mathf.Max(player.Stats.CurrentHealth - damage, 0);
-            player.TakeDamage(newHealth);
-            player.SetKnockback(knockbackDir, player.Stats.KnockbackForce);
+            player.Health.TakeDamage(newHealth);
+            player.Movement.SetKnockback(knockbackDir, player.Stats.KnockbackForce);
 
             var isDead = newHealth == 0;
 
@@ -43,15 +42,13 @@ namespace Game.Domain.Services
 
             if (isDead)
                 HandleDeath(player, currentMoveStateType);
-            else
-                player.StartHurt();
         }
 
         private void HandleDeath(PlayerEntity player, MovementStateType currentMoveStateType)
         {
             if (PlayerStateRules.CanCombine(currentMoveStateType, ActionStateType.Death))
             {
-                player.StartDead();
+                player.Health.StartDead();
                 _eventBus.Publish(new PlayerDiedEvent(player.Id));
             }
             else

@@ -26,7 +26,7 @@ namespace Game.Domain.StateMachine
             Debug.Log("Enter Climb State.");
             _eventBus.Publish(new PlayerUpdateMoveStateView(_playerEntity.Id, StateType));
             //event bus animacion de salto
-            _playerEntity.StartClimb();
+            //_playerEntity.StartClimb();
         }
 
         public void HandleCommand(InputCommand cmd)
@@ -41,7 +41,7 @@ namespace Game.Domain.StateMachine
 
         public void Exit()
         {
-            _playerEntity.StopClimb();
+            //_playerEntity.StopClimb();
             //event bus animacion si es necesario
         }
     }

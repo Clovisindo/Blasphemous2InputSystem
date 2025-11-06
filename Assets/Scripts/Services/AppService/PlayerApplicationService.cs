@@ -29,6 +29,12 @@ namespace Game.Services.Application
             _eventBus.Subscribe<PlayerDamagedEvent>(OnPlayerDamaged);
             _eventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
         }
+        public void Dispose()
+        {
+            _eventBus.Unsubscribe<DamageIntentEvent>(OnDamageIntent);
+            _eventBus.Unsubscribe<PlayerDamagedEvent>(OnPlayerDamaged);
+            _eventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
+        }
 
         public void ProcessInputCommands(InputCommand command, float deltaTime)
         {
@@ -81,7 +87,7 @@ namespace Game.Services.Application
         {
             if (intent.TargetPlayerId != _playerEntity.Id) return;
 
-            if (_playerEntity.IsInvulnerable)//comprobamos invulnerable, escudos, fuego amigo etc
+            if (_playerEntity.Flags.IsInvulnerable)//comprobamos invulnerable, escudos, fuego amigo etc
             {
                 //_eventBus.Publish(new playerDamageIgnored());
                 return;
@@ -103,11 +109,6 @@ namespace Game.Services.Application
             _stateMachines.Action.ChangeState<HurtActionState>(ActionStateType.Hurt);
         }
         
-        public void Dispose()
-        {
-            _eventBus.Unsubscribe<DamageIntentEvent>(OnDamageIntent);
-            _eventBus.Unsubscribe<PlayerDamagedEvent>(OnPlayerDamaged);
-            _eventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
-        }
+
     }
 }

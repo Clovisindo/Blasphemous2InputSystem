@@ -36,19 +36,19 @@ namespace Game.Domain.StateMachine
 
             _timer = new StateTimer(0.2f);
             //_eventBus.Publish(new PlayerDashStarted(_entity.Id, _direction));
-            _playerEntity.StartDash();
+            _playerEntity.Movement.StartDash();
         }
 
         public void HandleCommand(InputCommand cmd) { }
 
         public void Update(float dt) 
         {
-            _playerEntity.Dash(_direction, _playerEntity.Stats.DashSpeed, dt);
+            _playerEntity.Movement.Dash(_direction, _playerEntity.Stats.DashSpeed, dt);
             _timer.Update(dt);
 
             if (_timer.IsFinished)
             {
-                _playerEntity.StopDash();
+                _playerEntity.Movement.StopDash();
                 _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
             }
         }

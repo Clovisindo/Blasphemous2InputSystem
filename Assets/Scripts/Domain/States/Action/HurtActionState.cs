@@ -1,7 +1,6 @@
 ﻿using Game.Domain.Entities;
 using Game.Events;
 using Game.Input.Commands;
-using System;
 using UnityEngine;
 using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
@@ -30,9 +29,9 @@ namespace Game.Domain.StateMachine
             _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
 
             DisableMovement();
-            _eventBus.Publish(new PlayerHurtAnimStart(_playerEntity.Id));
+            
             _timer = new StateTimer(2f);
-            _playerEntity.StartHurt();
+            _playerEntity.Health.StartHurt(_playerEntity.Id);
         }
 
        
@@ -47,13 +46,12 @@ namespace Game.Domain.StateMachine
         public void Update(float dt)
         {
             _timer.Update(dt);
-            _playerEntity.ApplyKnockback(dt);
-            _playerEntity.SetKnockback(_playerEntity.KnockbackVelocity * KNOCKBACK_RESISTENCE, _playerEntity.Stats.KnockbackForce);
+            _playerEntity.Movement.ApplyKnockback(dt);
+            _playerEntity.Movement.SetKnockback(_playerEntity.Movement.KnockbackVelocity * KNOCKBACK_RESISTENCE, _playerEntity.Stats.KnockbackForce);
 
             if (_timer.IsFinished)
             {
-                _playerEntity.StopHurt();
-                _eventBus.Publish(new PlayerHurtAnimEnd(_playerEntity.Id));
+                _playerEntity.Health.StopHurt(_playerEntity.Id);
                 _stateMachine.ChangeState<IdleActionState>(ActionStateType.Idle);
             }
         }

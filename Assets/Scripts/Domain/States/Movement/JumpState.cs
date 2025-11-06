@@ -31,7 +31,7 @@ namespace Game.Domain.StateMachine
             if (context is IStateContext<JumpContextData> jumpCtx)
                 _initialDir = jumpCtx.Data.MoveDirecion;
             _isFalling = false;
-            _playerEntity.Jump();
+            _playerEntity.Movement.Jump();
             //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.JumpStart);
         }
 
@@ -51,19 +51,19 @@ namespace Game.Domain.StateMachine
 
         private void HandleJump(float dt)
         {
-            _playerEntity.ApplyGravity(_playerEntity.Stats.Gravity, dt);
+            _playerEntity.Movement.ApplyGravity(_playerEntity.Stats.Gravity, dt);
 
             if (_initialDir != Vector2.zero)//si hubo antes o en jumpstate algun comando de movimiento,actualizamos la posicion
-                _playerEntity.Move(_initialDir, dt);
+                _playerEntity.Movement.Move(_initialDir, dt);
 
-            if (_playerEntity.VerticalVelocity < 0 && !_isFalling)
+            if (_playerEntity.Movement.VerticalVelocity < 0 && !_isFalling)
             {
                 _isFalling = true;
                 //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.FallStart));
             }
-            if( _playerEntity.IsGrounded)
+            if( _playerEntity.Flags.IsGrounded)
             {
-                _playerEntity.ApplyGravity(0, dt);
+                _playerEntity.Movement.ApplyGravity(0, dt);
                 _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
                 //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.Land));
             }

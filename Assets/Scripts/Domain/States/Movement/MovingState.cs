@@ -51,7 +51,7 @@ namespace Game.Domain.StateMachine
         {
             _lasMoveDirection = move.Direction;
             if (move.Direction.sqrMagnitude > 0.01f)
-                _playerEntity.Move(move.Direction, move.Timestamp);
+                _playerEntity.Movement.Move(move.Direction, move.Timestamp);
             else
             {
                 //_eventBus.Publish(new PlayerStoppedMovingEvent(_entity.Id));

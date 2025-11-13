@@ -10,9 +10,9 @@ namespace Game.Domain.StateMachine
         public IMovementStateMachine Movement { get; }
         public IActionStateMachine Action { get; }
 
-        public PlayerStateMachine(PlayerEntity playerEntity,IEventBus eventBus)
+        public PlayerStateMachine(PlayerEntity playerEntity, InputBuffer inputbuffer,IEventBus eventBus)
         {
-            Movement = new MovementStateMachine(playerEntity, eventBus);
+            Movement = new MovementStateMachine(playerEntity, inputbuffer, eventBus);
             Action = new ActionStateMachine(playerEntity, eventBus);
         }
 

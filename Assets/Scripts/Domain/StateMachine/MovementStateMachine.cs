@@ -1,5 +1,6 @@
 ﻿using Game.Domain.Entities;
 using Game.Events;
+using Game.Input;
 using Game.Input.Commands;
 using System;
 using System.Collections.Generic;
@@ -17,15 +18,15 @@ namespace Game.Domain.StateMachine
         IMovementState _current;
         public MovementStateType CurrentStateType => _current.StateType;
 
-        public MovementStateMachine(PlayerEntity playerEntity, IEventBus eventBus)
+        public MovementStateMachine(PlayerEntity playerEntity, InputBuffer inputBuffer, IEventBus eventBus)
         {
             _playerEntity = playerEntity;
             _eventBus = eventBus;
             _states[typeof(IdleState)] = new IdleState(_playerEntity, this, eventBus);
             _states[typeof(MovingState)] = new MovingState(_playerEntity, this, eventBus);
-            _states[typeof(JumpState)] = new JumpState(_playerEntity, this, eventBus);
+            _states[typeof(JumpState)] = new JumpState(_playerEntity, this, inputBuffer, eventBus);
             _states[typeof(ClimbState)] = new ClimbState(_playerEntity, this, eventBus);
-            _states[typeof(DashState)] = new DashState(_playerEntity, this, eventBus);
+            _states[typeof(DashState)] = new DashState(_playerEntity, this, inputBuffer, eventBus);
 
             _current = _states[typeof(IdleState)];
             _current.Enter();

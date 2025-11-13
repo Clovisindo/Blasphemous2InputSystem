@@ -1,5 +1,6 @@
 ﻿using Game.Domain.Entities;
 using Game.Events;
+using Game.Input;
 using Game.Input.Commands;
 using UnityEngine;
 using static Game.Events.PlayerEvents.PlayerEvents;
@@ -13,14 +14,17 @@ namespace Game.Domain.StateMachine
         readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
         Vector2 _initialDir;
+        readonly InputBuffer _inputBuffer;
+        InputCommand _bufferedCommand;
         public MovementStateType StateType => MovementStateType.Jumping;
 
         bool _isFalling;
 
-        public JumpState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IEventBus eventBus)
+        public JumpState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, InputBuffer inputBuffer, IEventBus eventBus)
         {
             _stateMachine = stateMachine;
             _playerEntity = playerEntity;
+            _inputBuffer = inputBuffer;
             _eventBus = eventBus;
         }
 
@@ -32,6 +36,7 @@ namespace Game.Domain.StateMachine
                 _initialDir = jumpCtx.Data.MoveDirecion;
             _isFalling = false;
             _playerEntity.Movement.Jump();
+            
             //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.JumpStart);
         }
 
@@ -43,16 +48,18 @@ namespace Game.Domain.StateMachine
 
         public void HandleCommand(InputCommand cmd)
         {
+            
             if (cmd is MovementCommand move)
             {
                 _initialDir = move.Direction;
             }
+            else
+                _inputBuffer.AddCommand(cmd);//buffer al salir estado, no registramos moveCommands
         }
 
         private void HandleJump(float dt)
         {
             _playerEntity.Movement.ApplyGravity(_playerEntity.Stats.Gravity, dt);
-
             if (_initialDir != Vector2.zero)//si hubo antes o en jumpstate algun comando de movimiento,actualizamos la posicion
                 _playerEntity.Movement.Move(_initialDir, dt);
 
@@ -61,20 +68,20 @@ namespace Game.Domain.StateMachine
                 _isFalling = true;
                 //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.FallStart));
             }
-            if( _playerEntity.Flags.IsGrounded)
+            if (_playerEntity.Flags.IsGrounded)
             {
                 _playerEntity.Movement.ApplyGravity(0, dt);
-                _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
+
+                _bufferedCommand = _inputBuffer.Peek();
+
+                _eventBus.Publish(new MoveStateEndedEvent(_playerEntity.Id, _bufferedCommand));
                 //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.Land));
             }
         }
 
-        public void Exit()
+        public void Exit() 
         {
-            //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.JumpEnd));
+            _bufferedCommand = null;
         }
-
-
-       
     }
 }

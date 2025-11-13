@@ -68,7 +68,7 @@ namespace Game.Input
         {
             if (!_deviceFilter(ctx.control.device)) return;
             var type = ctx.interaction is HoldInteraction ? AttackType.Heavy : AttackType.Light;
-            _attackQueue.Enqueue(new AttackCommand(type, Time.unscaledTime));
+            _attackQueue.Enqueue(new AttackCommand(type, Time.unscaledDeltaTime));
         }
         private void OnJumpPerformed(InputAction.CallbackContext ctx)
         {

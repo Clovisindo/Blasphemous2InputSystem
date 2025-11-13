@@ -17,6 +17,7 @@ namespace Game.Core.Installers
 
             container.RegisterTransient(() =>
             new PlayerStateMachine(container.Resolve<PlayerEntity>() ,
+            container.Resolve<InputBuffer>(),
             container.Resolve<IEventBus>()
             ));
             container.RegisterSingleton<PlayerDomainService>(

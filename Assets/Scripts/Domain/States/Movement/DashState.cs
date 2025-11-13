@@ -1,7 +1,7 @@
 ﻿using Game.Domain.Entities;
 using Game.Events;
+using Game.Input;
 using Game.Input.Commands;
-using System;
 using UnityEngine;
 using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
@@ -15,14 +15,18 @@ namespace Game.Domain.StateMachine
         readonly IEventBus _eventBus;
         private StateTimer _timer;
         private Vector2 _direction;
+        const float DASH_DURATION = 2f;
+        readonly InputBuffer _inputBuffer;
+        InputCommand _bufferedCommand;
 
 
         public MovementStateType StateType => MovementStateType.Dash;
 
-        public DashState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IEventBus eventBus)
+        public DashState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, InputBuffer inputBuffer, IEventBus eventBus)
         {
             _stateMachine = stateMachine;
             _playerEntity = playerEntity;
+            _inputBuffer = inputBuffer;
             _eventBus = eventBus;
         }
 
@@ -31,28 +35,43 @@ namespace Game.Domain.StateMachine
             Debug.Log("Enter Dash State.");
             _eventBus.Publish(new PlayerUpdateMoveStateView(_playerEntity.Id, StateType));
 
+            if (context == null)
+                _direction = _playerEntity.FacingDirection;
             if (context is IStateContext<DashContextData> dashCtx)
                 _direction = dashCtx.Data.Direction;
 
-            _timer = new StateTimer(0.2f);
+            _timer = new StateTimer(DASH_DURATION);
             //_eventBus.Publish(new PlayerDashStarted(_entity.Id, _direction));
             _playerEntity.Movement.StartDash();
+            _playerEntity.Capabilities.Disable(Capability.Hurt);
         }
 
-        public void HandleCommand(InputCommand cmd) { }
+        public void HandleCommand(InputCommand cmd)
+        {
+            _inputBuffer.AddCommand(cmd);
+        }
 
-        public void Update(float dt) 
+        public void Update(float dt)
+        {
+            HandleDash(dt);
+        }
+
+        private void HandleDash(float dt)
         {
             _playerEntity.Movement.Dash(_direction, _playerEntity.Stats.DashSpeed, dt);
             _timer.Update(dt);
-
             if (_timer.IsFinished)
             {
                 _playerEntity.Movement.StopDash();
-                _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
+                _bufferedCommand = _inputBuffer.Peek();
+                _eventBus.Publish(new MoveStateEndedEvent(_playerEntity.Id, _bufferedCommand));
             }
         }
 
-        public void Exit() { }
+        public void Exit()
+        {
+            _bufferedCommand = null;
+            _playerEntity.Capabilities.Enable(Capability.Hurt);
+        }
     }
 }

@@ -17,8 +17,8 @@ namespace Game.Domain.StateMachine
             {
             { MovementStateType.Idle, new[] { MovementStateType.Moving, MovementStateType.Jumping, MovementStateType.Dash } },
             { MovementStateType.Moving, new[] { MovementStateType.Idle, MovementStateType.Jumping, MovementStateType.Dash } },
-            { MovementStateType.Jumping, new []{MovementStateType.Idle,MovementStateType.Moving } },
-            { MovementStateType.Dash, new []{ MovementStateType.Idle, MovementStateType.Moving, MovementStateType.Jumping } },
+            { MovementStateType.Jumping, new []{MovementStateType.Jumping, MovementStateType.Idle, MovementStateType.Dash } },
+            { MovementStateType.Dash, new []{ MovementStateType.Dash, MovementStateType.Idle, MovementStateType.Jumping } },
             };
 
         public static bool CanTransition(MovementStateType from, MovementStateType to)

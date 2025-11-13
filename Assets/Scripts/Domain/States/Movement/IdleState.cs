@@ -31,15 +31,15 @@ namespace Game.Domain.StateMachine
 
         public void HandleCommand(InputCommand cmd)
         {
-            if (cmd is MovementCommand move && move.Direction.sqrMagnitude > 0.01f)
+            if (cmd is MovementCommand move && move.Direction.sqrMagnitude > 0.01f && _playerEntity.Capabilities.Has(Capability.Move))
             {
                 _stateMachine.ChangeState<MovingState>(MovementStateType.Moving);
             }
-            else if (cmd is JumpCommand)
+            else if (cmd is JumpCommand && _playerEntity.Capabilities.Has(Capability.Jump))
             {
                 _stateMachine.ChangeState<JumpState>( MovementStateType.Jumping ,new JumpStateContext(Vector2.zero));
             }
-            else if (cmd is DashCommand dashCmd)
+            else if (cmd is DashCommand dashCmd && _playerEntity.Capabilities.Has(Capability.Dash))
             {
                 _stateMachine.ChangeState<DashState>(MovementStateType.Dash, new DashStateContext(_playerEntity.FacingDirection));
             }

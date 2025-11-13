@@ -1,4 +1,4 @@
-﻿
+﻿using Game.Input.Commands;
 using System;
 using UnityEngine;
 using static Utilities;
@@ -26,6 +26,17 @@ namespace Game.Events.PlayerEvents
 
             public DamageIntentEvent(Guid targetPlayerId, int damage, float stun, Vector2 knockbackDir, GameObject source) =>
                 (TargetPlayerId, Damage, StunDuration, KnockbackDirection, Source) = (targetPlayerId, damage, stun, knockbackDir, source);
+        }
+
+        public readonly struct MoveStateEndedEvent : IApplicationEvent
+        {
+            public readonly Guid PlayerId;
+            public readonly InputCommand InputCommand;
+            public MoveStateEndedEvent(Guid playerId, InputCommand inputCommand)
+            {
+                PlayerId = playerId;
+                InputCommand = inputCommand;
+            }
         }
 
         public readonly struct PlayerAttackStarted :IDomainEvent

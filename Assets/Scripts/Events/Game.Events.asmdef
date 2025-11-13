@@ -2,7 +2,8 @@
     "name": "Game.Events",
     "rootNamespace": "",
     "references": [
-        "GUID:465a2375429c6894bb807c572d1392ab"
+        "GUID:465a2375429c6894bb807c572d1392ab",
+        "GUID:eae89194f93d0bf408c6d1c647afde06"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -19,5 +19,6 @@ public class StateTimer
     }
 
     public bool IsFinished => _elapsed >= _duration;
+    public float Elapsed => _elapsed;
     public void Update(float dt) => _elapsed += dt;
 }

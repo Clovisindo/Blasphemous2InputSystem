@@ -16,7 +16,6 @@ namespace Game.Domain.StateMachine
             {(MovementStateType.Jumping,ActionStateType.Attacking), true}, // air attack allowed
             {(MovementStateType.Climb, ActionStateType.Attacking), false},
             {(MovementStateType.Dash,  ActionStateType.Attacking), false},
-            {(MovementStateType.Death, ActionStateType.Attacking), false},
 
              // hurt rules
             {(MovementStateType.Idle, ActionStateType.Hurt), true},
@@ -25,7 +24,7 @@ namespace Game.Domain.StateMachine
             {(MovementStateType.Climb, ActionStateType.Hurt), true},
             {(MovementStateType.Dash,  ActionStateType.Hurt), false},
 
-             // hurt rules
+             // death rules
             {(MovementStateType.Idle, ActionStateType.Death), true},
             {(MovementStateType.Moving, ActionStateType.Death), true},
             {(MovementStateType.Jumping,ActionStateType.Death), true},

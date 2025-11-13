@@ -7,7 +7,8 @@ namespace Game.Domain.Entities
         Move,
         Jump,
         Attack,
-        Dash
+        Dash,
+        Hurt
     }
 
     public class PlayerCapabilitySet

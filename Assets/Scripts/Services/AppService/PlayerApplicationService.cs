@@ -4,6 +4,7 @@ using Game.Domain.StateMachine;
 using Game.Events;
 using Game.Input;
 using Game.Input.Commands;
+using System;
 using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
 using Debug = UnityEngine.Debug;
@@ -14,26 +15,31 @@ namespace Game.Services.Application
     {
         readonly PlayerStateMachine _stateMachines;
         readonly PlayerDomainService _playerDomainService;
-        readonly InputBuffer _buffer;
         readonly PlayerEntity _playerEntity;
+        readonly InputBuffer _inputBuffer;
         readonly IEventBus _eventBus;
 
         public PlayerApplicationService(PlayerStateMachine stateMachines, PlayerDomainService playerDomainService, InputBuffer buffer, PlayerEntity playerEntity, IEventBus bus)
         {
             _stateMachines = stateMachines;
             _playerDomainService = playerDomainService;
-            _buffer = buffer;
             _playerEntity = playerEntity;
+            _inputBuffer = buffer;
             _eventBus = bus;
             _eventBus.Subscribe<DamageIntentEvent>(OnDamageIntent);
             _eventBus.Subscribe<PlayerDamagedEvent>(OnPlayerDamaged);
             _eventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
+            _eventBus.Subscribe<MoveStateEndedEvent>(OnMoveStateEndEvent);
         }
+
+        
+
         public void Dispose()
         {
             _eventBus.Unsubscribe<DamageIntentEvent>(OnDamageIntent);
             _eventBus.Unsubscribe<PlayerDamagedEvent>(OnPlayerDamaged);
             _eventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
+            _eventBus.Unsubscribe<MoveStateEndedEvent>(OnMoveStateEndEvent);
         }
 
         public void ProcessInputCommands(InputCommand command, float deltaTime)
@@ -57,7 +63,7 @@ namespace Game.Services.Application
             }
 
             // Aquí se pueden analizar combos, sin implementar de momento
-            var detectedCombo = _buffer.DetectCombo();
+            var detectedCombo = _inputBuffer.DetectCombo();
             if (detectedCombo != ComboType.None)
                 _stateMachines.ExecuteCombo(detectedCombo);
         }
@@ -68,7 +74,7 @@ namespace Game.Services.Application
 
             if (PlayerStateRules.CanCombine(moveState, ActionStateType.Attacking))// reglas entre move y action
             {
-                _buffer.AddCommand(attackCmd);// Añadimos al buffer antes de procesar
+                _inputBuffer.AddCommand(attackCmd);// Añadimos al buffer antes de procesar
                 _stateMachines.Action.ProcessCommand(attackCmd);//las reglas internas de transicion de action se las dejamos a la StateMachine
             }
             else
@@ -82,12 +88,38 @@ namespace Game.Services.Application
         {
             _stateMachines.Update(deltaTime);
         }
+        /// <summary>
+        /// Evento para transiciones desde estados autoconclusivos segun el inputBuffer
+        /// </summary>
+        /// <param name="evt"></param>
+        //No comprobamos aqui reglas por que son solo las internas de movimiento que ya se hacen en IMovementStateMachine
+        private void OnMoveStateEndEvent(MoveStateEndedEvent evt)
+        {
+            if (evt.PlayerId != _playerEntity.Id) return;
+            var cmd = evt.InputCommand;
+            _inputBuffer.Clear();
+
+            switch (cmd)
+            {
+                case JumpCommand:
+                    _stateMachines.Movement.ChangeState<JumpState>(MovementStateType.Jumping);
+                    break;
+
+                case DashCommand:
+                    _stateMachines.Movement.ChangeState<DashState>(MovementStateType.Dash);
+                    break;
+
+                default:
+                    _stateMachines.Movement.ChangeState<IdleState>(MovementStateType.Idle);
+                    break;
+            }
+        }
 
         private void OnDamageIntent(DamageIntentEvent intent)
         {
             if (intent.TargetPlayerId != _playerEntity.Id) return;
 
-            if (_playerEntity.Flags.IsInvulnerable)//comprobamos invulnerable, escudos, fuego amigo etc
+            if (!_playerEntity.Capabilities.Has(Capability.Hurt))//comprobamos invulnerable, escudos, fuego amigo etc
             {
                 //_eventBus.Publish(new playerDamageIgnored());
                 return;

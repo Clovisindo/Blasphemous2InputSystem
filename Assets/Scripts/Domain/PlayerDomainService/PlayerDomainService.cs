@@ -21,14 +21,12 @@ namespace Game.Domain.Services
 
         public void ApplyDamage(PlayerEntity player, MovementStateType currentMoveStateType, int damage, Vector2 knockbackDir)
         {
-            if (player.Flags.IsInvulnerable) return;
-
             if (!PlayerStateRules.CanCombine(currentMoveStateType, ActionStateType.Hurt))// reglas entre move y action
             {
                 BlockAction(player, ActionStateType.Hurt, currentMoveStateType);
+                return;
             }
-            HandleDamage(player,currentMoveStateType,damage, knockbackDir);
-
+            HandleDamage(player, currentMoveStateType, damage, knockbackDir);
         }
         private void HandleDamage(PlayerEntity player, MovementStateType currentMoveStateType, int damage, Vector2 knockbackDir)
         {

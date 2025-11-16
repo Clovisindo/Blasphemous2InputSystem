@@ -12,6 +12,7 @@ namespace Game.Input
     {
         private readonly Func<InputDevice, bool> _deviceFilter = device => device is Keyboard;
         readonly Queue<InputCommand> _attackQueue = new();
+        readonly Queue<InputCommand> _jumpQueue = new();
         PlayerInputActions _actions;
         Vector2 _currentMovement = Vector2.zero;
         /// <summary>
@@ -27,9 +28,13 @@ namespace Game.Input
             _actions.Gameplay.Movement.performed += OnMovementPerformed;
             _actions.Gameplay.Movement.canceled += OnMovementCanceled;
             _actions.Gameplay.Attack.performed += OnAttackPerformed;
+            _actions.Gameplay.Jump.performed += OnJumpPerformed;
+            _actions.Gameplay.Dash.performed += OnDashPerformed;
 
             _actions.Enable();
         }
+
+       
 
         public List<InputCommand> Poll(float deltaTime)
         {
@@ -49,19 +54,12 @@ namespace Game.Input
             {
                 outList.Add(_attackQueue.Dequeue());
             }
+            while (_jumpQueue.Count > 0)
+            {
+                outList.Add(_jumpQueue.Dequeue());
+            }
 
             return outList;
-        }
-
-        public void ShutDown()
-        {
-            if (_actions != null)
-            {
-                _actions.Gameplay.Movement.performed -= OnMovementPerformed;
-                _actions.Gameplay.Movement.canceled -= OnMovementCanceled;
-                _actions.Gameplay.Attack.performed -= OnAttackPerformed;
-                _actions.Disable();
-            }
         }
 
         void OnMovementPerformed(InputAction.CallbackContext ctx)
@@ -82,7 +80,31 @@ namespace Game.Input
         {
             if (!_deviceFilter(ctx.control.device)) return;
             var type = ctx.interaction is HoldInteraction ? AttackType.Heavy : AttackType.Light;
-            _attackQueue.Enqueue(new AttackCommand(type, Time.unscaledTime));
+            _attackQueue.Enqueue(new AttackCommand(type, Time.unscaledDeltaTime));
+        }
+
+        private void OnJumpPerformed(InputAction.CallbackContext ctx)
+        {
+            if (!_deviceFilter(ctx.control.device)) return;
+            _jumpQueue.Enqueue(new JumpCommand(Time.unscaledDeltaTime));
+        }
+
+        private void OnDashPerformed(InputAction.CallbackContext ctx)
+        {
+            if (!_deviceFilter(ctx.control.device)) return;
+            _jumpQueue.Enqueue(new DashCommand(Time.unscaledDeltaTime));
+        }
+        public void ShutDown()
+        {
+            if (_actions != null)
+            {
+                _actions.Gameplay.Movement.performed -= OnMovementPerformed;
+                _actions.Gameplay.Movement.canceled -= OnMovementCanceled;
+                _actions.Gameplay.Attack.performed -= OnAttackPerformed;
+                _actions.Gameplay.Jump.performed -= OnJumpPerformed;
+                _actions.Gameplay.Dash.performed -= OnDashPerformed;
+                _actions.Disable();
+            }
         }
     }
 }

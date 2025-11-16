@@ -2,10 +2,13 @@
     "name": "Game.Application",
     "rootNamespace": "",
     "references": [
-        "GUID:eae89194f93d0bf408c6d1c647afde06",
         "GUID:eff35eb1a4a2796409e3ce5f4eee8f81",
         "GUID:93038ba45ca64ba4698d067eda634ce4",
-        "GUID:0bb8141eb11aca54ab4fb0c7480e6cad"
+        "GUID:0bb8141eb11aca54ab4fb0c7480e6cad",
+        "GUID:03a4a0947ce0e334e8506fc774337684",
+        "GUID:eae89194f93d0bf408c6d1c647afde06",
+        "GUID:465a2375429c6894bb807c572d1392ab",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

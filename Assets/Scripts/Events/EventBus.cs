@@ -5,40 +5,34 @@ namespace Game.Events
 {
     public interface IEventBus
     {
-        void Subscribe<T>(Action<T> handler);
-        void Unsubscribe<T>(Action<T> handler);
-        void Publish<T>(T evt);
+        void Subscribe<T>(Action<T> handler) where T : IEvent;
+        void Unsubscribe<T>(Action<T> handler) where T : IEvent;
+        void Publish<T>(T evt) where T : IEvent;
     }
 
     public class EventBus : IEventBus
     {
-        readonly Dictionary<Type, Delegate> _handlers = new();
+        readonly Dictionary<Type, List<Delegate>> _handlers = new();
 
-        public void Subscribe<T>(Action<T> handler)
+        public void Subscribe<T>(Action<T> handler) where T : IEvent
         {
-            var t = typeof(T);
-            if (_handlers.TryGetValue(t, out var del)) _handlers[t] = Delegate.Combine(del, handler);
-            else _handlers[t] = handler;
+            if (!_handlers.TryGetValue(typeof(T), out var list))
+                list = _handlers[typeof(T)] = new List<Delegate>();
+
+            list.Add(handler);
         }
 
-        public void Unsubscribe<T>(Action<T> handler)
+        public void Unsubscribe<T>(Action<T> handler) where T : IEvent
         {
-            var t = typeof(T);
-            if (_handlers.TryGetValue(t, out var del))
-            {
-                var newDel = Delegate.Remove(del, handler);
-                if (newDel == null) _handlers.Remove(t);
-                else _handlers[t] = newDel;
-            }
+            if (_handlers.TryGetValue(typeof(T), out var list))
+                list.Remove(handler);
         }
 
-        public void Publish<T>(T evt)
+        public void Publish<T>(T evt) where T : IEvent
         {
-            if (_handlers.TryGetValue(typeof(T), out var del))
-            {
-                var action = del as Action<T>;
-                action?.Invoke(evt);
-            }
+            if (_handlers.TryGetValue(typeof(T), out var list))
+                foreach (var l in list)
+                    (l as Action<T>)?.Invoke(evt);
         }
     }
 }

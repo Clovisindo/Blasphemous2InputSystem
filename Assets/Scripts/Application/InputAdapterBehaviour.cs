@@ -1,21 +1,21 @@
 ﻿using Game.Core;
+using Game.Core.Orchestrator;
 using UnityEngine;
 
 namespace Game.Input
 {
-    public class InputAdapterBehaviour : MonoBehaviour
+    public class InputAdapterBehaviour : MonoBehaviour,ICoreDependent
     {
         public InputAdapter Adapter { get; private set; }
 
         private void Awake()
         {
-            Bootstrapper.OnCoreInitialized += OnCoreReady;
+            CoreOrchestrator.Register(this);
         }
 
-        private void OnCoreReady(PlayerInputActions actions)
+        public void OnCoreReady()
         {
             Adapter = Bootstrapper.Container.Resolve<InputAdapter>();
-            Bootstrapper.OnCoreInitialized -= OnCoreReady;
         }
 
         private void Update()
@@ -27,5 +27,7 @@ namespace Game.Input
         {
             Adapter.ShutDown();
         }
+
+       
     }
 }

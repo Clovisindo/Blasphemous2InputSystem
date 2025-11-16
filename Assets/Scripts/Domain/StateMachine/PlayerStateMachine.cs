@@ -1,37 +1,28 @@
-﻿using Game.Events;
+﻿using Game.Domain.Entities;
+using Game.Events;
 using Game.Input;
 using Game.Input.Commands;
-using Game.Settings;
-using System;
-using System.Collections.Generic;
 
 namespace Game.Domain.StateMachine
 {
     public class PlayerStateMachine
     {
-        readonly Dictionary<Type, IPlayerState> _states = new();
-        IPlayerState _current;
+        public IMovementStateMachine Movement { get; }
+        public IActionStateMachine Action { get; }
 
-        public PlayerStateMachine(PlayerSettingsSO settings,IEventBus eventBus)
+        public PlayerStateMachine(PlayerEntity playerEntity, InputBuffer inputbuffer,IEventBus eventBus)
         {
-            _states[typeof(IdleState)] = new IdleState(this,settings,eventBus);
-            _states[typeof(MovingState)] = new MovingState(this, settings, eventBus);
-            _states[typeof(AttackingState)] = new AttackingState(this, settings, eventBus);
-            
-            _current = _states[typeof(IdleState)];
-            _current.Enter();
+            Movement = new MovementStateMachine(playerEntity, inputbuffer, eventBus);
+            Action = new ActionStateMachine(playerEntity, eventBus);
         }
 
-        public void ChangeState<T>() where T : IPlayerState
+        public void ProcessCommand(InputCommand cmd) { }
+
+        public void Update(float dt)
         {
-            _current.Exit();
-            _current = _states[typeof(T)];
-            _current.Enter();
+            Movement.Update(dt);
+            Action.Update(dt);
         }
-
-        public void ProcessCommand(InputCommand cmd) => _current.HandleCommand(cmd);
-
-        public void Update(float dt) => _current.Update(dt);
 
         public void ExecuteCombo(ComboType type)
         {

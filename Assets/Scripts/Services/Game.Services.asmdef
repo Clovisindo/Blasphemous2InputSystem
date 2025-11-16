@@ -1,0 +1,19 @@
+{
+    "name": "Game.Services",
+    "rootNamespace": "",
+    "references": [
+        "GUID:eae89194f93d0bf408c6d1c647afde06",
+        "GUID:eff35eb1a4a2796409e3ce5f4eee8f81",
+        "GUID:0bb8141eb11aca54ab4fb0c7480e6cad",
+        "GUID:465a2375429c6894bb807c572d1392ab"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

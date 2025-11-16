@@ -1,8 +1,7 @@
 using Game.Core;
-using Game.Domain.StateMachine;
-using Game.Events;
 using Game.Input;
 using Game.Input.Commands;
+using Game.Services.Application;
 using UnityEngine;
 
 namespace Game.Application
@@ -10,54 +9,24 @@ namespace Game.Application
 
     public class PlayerController : MonoBehaviour
     {
-        PlayerStateMachine _stateMachine;
-        InputBuffer _buffer;
-        IInputService _input;
-        IEventBus _eventBus;
-        Animator _anim;
-
-        // Opcional: evitar encolar idéntico movimiento cada frame
-        Vector2 _lastEnqueuedMovement = Vector2.zero;
-        [Tooltip("Si true: solo encola movimiento si cambia o ha pasado el intervalo")]
-        public bool optimizeMovementEnqueue = true;
-        public float movementEnqueueInterval = 1f / 60f; // en segundos (p. ej. 60 Hz)
+        IInputService _inputService;
+        IPlayerApplicationService _playerApp;
 
         private void Awake()
         {
-            _input = Bootstrapper.Container.Resolve<IInputService>();
-            _buffer = Bootstrapper.Container.Resolve<InputBuffer>();
-            _stateMachine = Bootstrapper.Container.Resolve<PlayerStateMachine>();
-            _eventBus = Bootstrapper.Container.Resolve<IEventBus>();
-            _anim = GetComponent<Animator>();
-
-            _eventBus.Subscribe<PlayerMoveEvent>(OnMove);
-            _eventBus.Subscribe<PlayerAnimationEvent>(OnAnimation);
+            _inputService = Bootstrapper.Container.Resolve<IInputService>();
+            _playerApp = Bootstrapper.Container.Resolve<IPlayerApplicationService>();
         }
 
         private void Update()
         {
-            // 1) Procesar comandos puntuales en cola (ataques, etc.)
-            while (_input.TryDequeue(out var cmd))
+            InputCommand command;
+            while (_inputService.TryDequeue(out command))
             {
-                _buffer.AddCommand(cmd);
-                _stateMachine.ProcessCommand(cmd);
+                _playerApp.ProcessInputCommands(command, Time.deltaTime);
             }
 
-            // 2) Movimiento continuo: leer estado cacheado y generar MovementCommand por frame
-            _stateMachine.Update(Time.deltaTime);
-
-            var combo = _buffer.DetectCombo();
-            if (combo != ComboType.None) _stateMachine.ExecuteCombo(combo);
-        }
-        void OnMove(PlayerMoveEvent ev)
-        {
-            transform.position += (Vector3)ev.MovementDelta;
-        }
-
-        void OnAnimation(PlayerAnimationEvent ev)
-        {
-            Debug.Log("Aplicando animacion en jugador.");
-            //_anim.SetTrigger(ev.TriggerName);
+            _playerApp.Update(Time.deltaTime);
         }
     }
 }

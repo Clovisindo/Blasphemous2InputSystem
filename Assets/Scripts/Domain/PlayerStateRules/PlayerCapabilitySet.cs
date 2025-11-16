@@ -2,21 +2,22 @@
 
 namespace Game.Domain.Entities
 {
-    public enum Capability
+    public enum MoveCapability
     {
         Move,
         Jump,
-        Attack,
         Dash,
-        Hurt
+        IsGrounded,
+        IsAttacking,
+        IsDead
     }
 
     public class PlayerCapabilitySet
     {
-        private readonly HashSet<Capability> _disabled = new();
+        private readonly HashSet<MoveCapability> _capabilities = new();
 
-        public bool Has(Capability cap) => !_disabled.Contains(cap);
-        public void Disable(Capability cap) => _disabled.Add(cap);
-        public void Enable(Capability cap) => _disabled.Remove(cap);
+        public bool Has(MoveCapability cap) => _capabilities.Contains(cap);
+        public void Add(MoveCapability cap) => _capabilities.Add(cap);
+        public void Remove(MoveCapability cap) => _capabilities.Remove(cap);
     }
 }

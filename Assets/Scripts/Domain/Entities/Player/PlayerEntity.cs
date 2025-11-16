@@ -20,17 +20,16 @@ namespace Game.Domain.Entities
         public readonly MovementComponent Movement;
         public readonly CombatComponent Combat;
         public readonly HealthComponent Health;
-        public readonly StateFlags Flags;
+        public readonly DamageController DamageController;
         public AttackDataSO[] attacks;// pendiente ver que usamos de aqui o no, si hacemos un SO o no
 
         public PlayerEntity(PlayerStats stats, IEventBus eventBus)
         {
             Stats = stats;
-            Flags = new StateFlags();
             Movement = new MovementComponent(this, eventBus);
             Combat = new CombatComponent(this, eventBus);
             Health = new HealthComponent(this, eventBus);
-            Flags.IsInvulnerable = false;
+            DamageController = new DamageController();
         }
 
         internal void SetPosition(Vector2 newPos) => Position = newPos;

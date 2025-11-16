@@ -33,13 +33,7 @@ namespace Game.Domain.StateMachine
             Debug.Log("Enter action Attacking");
             _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
 
-            _stateTimer = new StateTimer(_attackDuration);
-            _playerEntity.Combat.StartAttack(_currentAttack);
-        }
-
-        public void Exit() 
-        {
-            _playerEntity.Combat.StopAttack();
+            StartAttack();
         }
 
         public void HandleCommand(InputCommand cmd) { }//durante ataque no procesamos otros actions inputs
@@ -48,9 +42,15 @@ namespace Game.Domain.StateMachine
         {
             _stateTimer.Update(dt);
             if (_stateTimer.IsFinished)
-            {
                 _machine.ChangeState<IdleActionState>(ActionStateType.Idle);
-            }
         }
+
+        private void StartAttack()
+        {
+            _stateTimer = new StateTimer(_attackDuration);
+            _playerEntity.Combat.StartAttack(_currentAttack);
+        }
+
+        public void Exit() => _playerEntity.Combat.StopAttack();
     }
 }

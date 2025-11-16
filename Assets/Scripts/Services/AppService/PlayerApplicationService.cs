@@ -4,7 +4,6 @@ using Game.Domain.StateMachine;
 using Game.Events;
 using Game.Input;
 using Game.Input.Commands;
-using System;
 using static Game.Events.PlayerEvents.PlayerEvents;
 using static Utilities;
 using Debug = UnityEngine.Debug;
@@ -119,7 +118,7 @@ namespace Game.Services.Application
         {
             if (intent.TargetPlayerId != _playerEntity.Id) return;
 
-            if (!_playerEntity.Capabilities.Has(Capability.Hurt))//comprobamos invulnerable, escudos, fuego amigo etc
+            if (_playerEntity.DamageController.isInvulnerable)//comprobamos invulnerable, escudos, fuego amigo etc
             {
                 //_eventBus.Publish(new playerDamageIgnored());
                 return;

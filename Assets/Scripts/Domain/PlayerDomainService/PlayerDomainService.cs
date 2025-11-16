@@ -21,7 +21,7 @@ namespace Game.Domain.Services
 
         public void ApplyDamage(PlayerEntity player, MovementStateType currentMoveStateType, int damage, Vector2 knockbackDir)
         {
-            if (!PlayerStateRules.CanCombine(currentMoveStateType, ActionStateType.Hurt))// reglas entre move y action
+            if (!PlayerStateRules.CanCombine(currentMoveStateType, ActionStateType.Hurt))
             {
                 BlockAction(player, ActionStateType.Hurt, currentMoveStateType);
                 return;

@@ -29,19 +29,17 @@ namespace Game.Domain.StateMachine
             //_eventBus.Publish(new PlayerStartedMovingEvent(_entity.Id));
         }
 
-        public void Exit() { }
-
         public void HandleCommand(InputCommand cmd)
         {
             if ( cmd is MovementCommand move)
             {
                 HandleMovement(move);
             }
-            else if (cmd is JumpCommand)
+            else if (cmd is JumpCommand && _playerEntity.Capabilities.Has(MoveCapability.Jump))
             {
                 _stateMachine.ChangeState<JumpState>( MovementStateType.Jumping, new JumpStateContext(_lasMoveDirection));
             }
-            else if (cmd is DashCommand)
+            else if (cmd is DashCommand && _playerEntity.Capabilities.Has(MoveCapability.Dash))
             {
                 _stateMachine.ChangeState<DashState>(MovementStateType.Dash, new DashStateContext(_lasMoveDirection));
             }
@@ -53,16 +51,16 @@ namespace Game.Domain.StateMachine
             if (move.Direction.sqrMagnitude > 0.01f)
                 _playerEntity.Movement.Move(move.Direction, move.Timestamp);
             else
-            {
-                //_eventBus.Publish(new PlayerStoppedMovingEvent(_entity.Id));
-                _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
-            }
+                EndMovement();
         }
 
-        /// <summary>
-        /// solo par animaciones dependientes del tiempo
-        /// </summary>
-        /// <param name="dt"></param>
+        private void EndMovement()
+        {
+            //_eventBus.Publish(new PlayerStoppedMovingEvent(_entity.Id));
+            _stateMachine.ChangeState<IdleState>(MovementStateType.Idle);
+        }
+
         public void Update(float dt) { }
+        public void Exit() { }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Game.Domain.Entities;
+using Game.Domain.Entities.Player;
 using Game.Events;
 using Game.Input;
 using Game.Input.Commands;
@@ -42,8 +43,8 @@ namespace Game.Domain.StateMachine
 
             _timer = new StateTimer(DASH_DURATION);
             //_eventBus.Publish(new PlayerDashStarted(_entity.Id, _direction));
-            _playerEntity.Movement.StartDash();
-            _playerEntity.Capabilities.Disable(Capability.Hurt);
+            StartDash();
+
         }
 
         public void HandleCommand(InputCommand cmd)
@@ -61,17 +62,26 @@ namespace Game.Domain.StateMachine
             _playerEntity.Movement.Dash(_direction, _playerEntity.Stats.DashSpeed, dt);
             _timer.Update(dt);
             if (_timer.IsFinished)
-            {
-                _playerEntity.Movement.StopDash();
-                _bufferedCommand = _inputBuffer.Peek();
-                _eventBus.Publish(new MoveStateEndedEvent(_playerEntity.Id, _bufferedCommand));
-            }
+                EndDash();
+        }
+
+        private void StartDash()
+        {
+            _playerEntity.Movement.StartDash();
+            _playerEntity.DamageController.AddInvulnerability(InvulnerableCapability.Dash);
+        }
+
+        private void EndDash()
+        {
+            _playerEntity.Movement.StopDash();
+            _playerEntity.DamageController.RemoveInvulnerability(InvulnerableCapability.Dash);
+            _bufferedCommand = _inputBuffer.Peek();
+            _eventBus.Publish(new MoveStateEndedEvent(_playerEntity.Id, _bufferedCommand));
         }
 
         public void Exit()
         {
             _bufferedCommand = null;
-            _playerEntity.Capabilities.Enable(Capability.Hurt);
         }
     }
 }

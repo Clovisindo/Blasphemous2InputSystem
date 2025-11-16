@@ -14,11 +14,15 @@ namespace Game.Domain.Entities.Player
         {
             _player = player;
             _eventBus = eventBus;
+            _player.Capabilities.Add(MoveCapability.Move);
+            _player.Capabilities.Add(MoveCapability.Jump);
+            _player.Capabilities.Add(MoveCapability.Dash);
+            _player.Capabilities.Add(MoveCapability.IsGrounded);
         }
 
         public void Move(Vector2 direction, float deltaTime)
         {
-            if (!_player.Capabilities.Has(Capability.Move))
+            if (!_player.Capabilities.Has(MoveCapability.Move))
                 return;
 
             float horizontalMove = direction.x;
@@ -41,23 +45,23 @@ namespace Game.Domain.Entities.Player
         {
             // Simplificación: leer del controller o de colisiones por evento?
             if (_player.Position.y <= 0)
-                _player.Flags.IsGrounded = true;
+                _player.Capabilities.Add(MoveCapability.IsGrounded);
         }
 
         //ToDo: llevarse estos metodos y publicar eventos al PlayerDomainService
         public void Jump()
         {
-            if (!_player.Capabilities.Has(Capability.Move))
+            if (!_player.Capabilities.Has(MoveCapability.Move))
                 return;
 
-            _player.Flags.IsGrounded = false;
+            _player.Capabilities.Remove(MoveCapability.IsGrounded);
             VerticalVelocity = _player.Stats.JumpForce;
             _eventBus.Publish(new PlayerJumpStartedEvent(_player.Id, _player.Stats.JumpForce));
         }
 
         public void Dash(Vector2 direction, float dashSpeed, float deltaTime)
         {
-            if (!_player.Capabilities.Has(Capability.Dash))
+            if (!_player.Capabilities.Has(MoveCapability.Dash))
                 return;
 
             direction.y = 0f;
@@ -80,14 +84,11 @@ namespace Game.Domain.Entities.Player
 
         public void StartDash()
         {
-            _player.Flags.IsDashing = true;
-            _player.Flags.IsInvulnerable = true;
+            //_eventBus.Publish(new PlayerDashStarted(Id));
 
         }
         public void StopDash()
         {
-            _player.Flags.IsDashing = false;
-            _player.Flags.IsInvulnerable = false;
             //_eventBus.Publish(new PlayerDashEnded(Id));
         }
     }

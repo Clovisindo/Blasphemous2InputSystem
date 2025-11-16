@@ -25,8 +25,9 @@ namespace Game.Domain.StateMachine
         public void Enter(IStateContext context = null)
         {
             Debug.Log("Enter death action State.");
-            DisableMovement();
             _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
+
+            DisableMovement();
         }
 
         public void Exit() { }
@@ -37,9 +38,9 @@ namespace Game.Domain.StateMachine
 
         private void DisableMovement()
         {
-            _playerEntity.Capabilities.Disable(Capability.Move);
-            _playerEntity.Capabilities.Disable(Capability.Jump);
-            _playerEntity.Capabilities.Disable(Capability.Dash);
+            _playerEntity.Capabilities.Remove(MoveCapability.Move);
+            _playerEntity.Capabilities.Remove(MoveCapability.Jump);
+            _playerEntity.Capabilities.Remove(MoveCapability.Dash);
         }
     }
 }

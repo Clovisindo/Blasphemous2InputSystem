@@ -24,16 +24,13 @@ namespace Game.Domain.Entities.Player
         public void StartHurt(Guid playerId)
         {
             _eventBus.Publish(new PlayerHurtAnimStart(playerId));
-            _player.Flags.IsHurt = true;
-            _player.Flags.IsInvulnerable = true;
         }
+
         public void StopHurt(Guid playerId)
         {
             _eventBus.Publish(new PlayerHurtAnimEnd(playerId));
-            _player.Flags.IsHurt = false;
-            _player.Flags.IsInvulnerable = false;
         }
-        public void StartDead() => _player.Flags.IsDead = true;
-        public void StopDead() => _player.Flags.IsDead = false;
+        public void StartDead() => _player.Capabilities.Add(MoveCapability.IsDead);
+        public void StopDead() => _player.Capabilities.Remove(MoveCapability.IsDead);
     }
 }

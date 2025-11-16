@@ -17,13 +17,13 @@ namespace Game.Domain.Entities.Player
 
         public void StartAttack(AttackType type)
         {
-            _player.Flags.IsAttacking = true;
+            _player.Capabilities.Add(MoveCapability.IsAttacking);
             _eventBus.Publish(new PlayerAttackStarted(_player.Id, type));
         }
 
         public void StopAttack()
         {
-            _player.Flags.IsAttacking = false;
+            _player.Capabilities.Remove(MoveCapability.IsAttacking);
             _eventBus.Publish(new PlayerAttackFinished(_player.Id));
         }
     }

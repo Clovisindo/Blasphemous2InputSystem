@@ -39,9 +39,7 @@ namespace Game.Domain.StateMachine
                 );
             }
             else// ToDo: temporal
-            {
                 Debug.Log($" La accion  de atacar está bloqueada con el estado actual de la maquina de estados de accion: {_machine.CurrentStateType}");
-            }
         }
 
         public void Update(float dt) { }

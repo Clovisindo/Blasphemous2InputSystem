@@ -32,11 +32,11 @@ namespace Game.Domain.StateMachine
         {
             Debug.Log("Enter Jump State.");
             _eventBus.Publish(new PlayerUpdateMoveStateView(_playerEntity.Id, StateType));
+
             if (context is IStateContext<JumpContextData> jumpCtx)
                 _initialDir = jumpCtx.Data.MoveDirecion;
-            _isFalling = false;
-            _playerEntity.Movement.Jump();
-            
+            StartJump();
+
             //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.JumpStart);
         }
 
@@ -45,14 +45,11 @@ namespace Game.Domain.StateMachine
             HandleJump(dt);
         }
 
-
         public void HandleCommand(InputCommand cmd)
         {
             
             if (cmd is MovementCommand move)
-            {
                 _initialDir = move.Direction;
-            }
             else
                 _inputBuffer.AddCommand(cmd);//buffer al salir estado, no registramos moveCommands
         }
@@ -64,19 +61,32 @@ namespace Game.Domain.StateMachine
                 _playerEntity.Movement.Move(_initialDir, dt);
 
             if (_playerEntity.Movement.VerticalVelocity < 0 && !_isFalling)
-            {
-                _isFalling = true;
-                //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.FallStart));
-            }
-            if (_playerEntity.Flags.IsGrounded)
-            {
-                _playerEntity.Movement.ApplyGravity(0, dt);
+                StartFalling();
 
-                _bufferedCommand = _inputBuffer.Peek();
+            if (_playerEntity.Capabilities.Has(MoveCapability.IsGrounded))
+                EndJump(dt);
+        }
 
-                _eventBus.Publish(new MoveStateEndedEvent(_playerEntity.Id, _bufferedCommand));
-                //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.Land));
-            }
+        private void StartJump()
+        {
+            _isFalling = false;
+            _playerEntity.Movement.Jump();
+        }
+
+        private void StartFalling()
+        {
+            _isFalling = true;
+            //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.FallStart));
+        }
+
+        private void EndJump(float dt)
+        {
+            _playerEntity.Movement.ApplyGravity(0, dt);
+
+            _bufferedCommand = _inputBuffer.Peek();
+
+            _eventBus.Publish(new MoveStateEndedEvent(_playerEntity.Id, _bufferedCommand));
+            //_eventBus.Publish(new PlayerAnimationEvent(PlayerAnimationType.Land));
         }
 
         public void Exit() 

@@ -1,4 +1,5 @@
 ﻿using Game.Domain.Entities;
+using Game.Domain.Entities.Player;
 using Game.Events;
 using Game.Input.Commands;
 using UnityEngine;
@@ -28,7 +29,10 @@ namespace Game.Domain.StateMachine
         {
             Debug.Log("Enter hurt action State.");
             _eventBus.Publish(new PlayerUpdateActionStateView(_playerEntity.Id, StateType));
+
             DisableMovement();
+            HandleEnterHurt();
+
             _timer = new StateTimer(2f);
             _playerEntity.Health.StartHurt(_playerEntity.Id);
         }
@@ -45,32 +49,38 @@ namespace Game.Domain.StateMachine
                 EnableMovement();
 
             if (_timer.IsFinished)
-            {
-                _playerEntity.Health.StopHurt(_playerEntity.Id);
-                _stateMachine.ChangeState<IdleActionState>(ActionStateType.Idle);
-            }
+                HandleExitHurt();
         }
 
         public void Exit()
         {
             EnableMovement();
-            _playerEntity.Capabilities.Enable(Capability.Hurt);
         }
 
         private void DisableMovement()
         {
-            _playerEntity.Capabilities.Disable(Capability.Move);
-            _playerEntity.Capabilities.Disable(Capability.Jump);
-            _playerEntity.Capabilities.Disable(Capability.Dash);
-            _playerEntity.Capabilities.Disable(Capability.Hurt);
+            _playerEntity.Capabilities.Remove(MoveCapability.Move);
+            _playerEntity.Capabilities.Remove(MoveCapability.Jump);
+            _playerEntity.Capabilities.Remove(MoveCapability.Dash);
         }
 
         private void EnableMovement()
         {
-            _playerEntity.Capabilities.Enable(Capability.Move);
-            _playerEntity.Capabilities.Enable(Capability.Jump);
-            _playerEntity.Capabilities.Enable(Capability.Dash);
-            
+            _playerEntity.Capabilities.Add(MoveCapability.Move);
+            _playerEntity.Capabilities.Add(MoveCapability.Jump);
+            _playerEntity.Capabilities.Add(MoveCapability.Dash);
+        }
+       
+        private void HandleEnterHurt()
+        {
+            _playerEntity.DamageController.AddInvulnerability(InvulnerableCapability.Hurt);
+        }
+
+        private void HandleExitHurt()
+        {
+            _playerEntity.Health.StopHurt(_playerEntity.Id);
+            _playerEntity.DamageController.RemoveInvulnerability(InvulnerableCapability.Hurt);
+            _stateMachine.ChangeState<IdleActionState>(ActionStateType.Idle);
         }
     }
 }

@@ -60,3 +60,37 @@ The view layer of the flow, show the player and current status.
 
 
 # Features ( las funciones especificas y como funcionan)
+
+## Bootstrapper
+Initialize all the components and dependencies injections.
+Controls the initialize correct order.
+Interface ICoreDependent to initialize objects in scene, after bootstrapper finish.
+  It would be better to only initialize from instantiation from bootstrapper and not objects already loaded in scene, but I found it interesting to try this hybrid solution and how it would works.
+
+## Strategy pattern
+Provides specific pattern and workflow for each input device.
+For example: keyboard and gamepad using unity's input action system generate different information, but we need to normalize this data in order to generate a standard MoveCommand, so that the upper layers don't have to know the specific implementation.
+
+## Layers design
+<img width="498" height="310" alt="imagen" src="https://github.com/user-attachments/assets/d44854e2-66f7-442f-8aad-70b620c469a6" />
+Benefits of this design:
+- Responsability separation.
+- Better dependencies order.
+- Easy to expand.
+- Easy tests.
+
+## Programming on DDD
+When We design focus on domain, we're more independent for Unity or any engine We use.
+This give us lot of advantages from better and more readable design, better prototyping and iteration without depending on the view layer, improved portability, less coupling and more scalability, make unit test or even change your engine.
+
+## Parrarel Finite State Machine (FSM)
+In a first version of the state machines, I found that when the player receive damage and block their movement, in some cases We need that the previous state still working, for example receive a hit in the middle of a jump( this error could be avoided with a better previous design and definition the full requirements of the player actions).
+
+Then We proceed to a dual state machine model: one for the movement states and another with the states that need to happen at the same time of some movement actions.
+Both state machines run at the same time, and check the rules We define in the analysis before transition to new states.
+We use three elements to control this workflow:
+Rules for internal use in each type SM: this define the flow between their own states.
+Rules for move and action states: when a new action state try to enter, it would verify if its a correct state to the actual move state.
+Player entity capabilities: the action states can disable the capabilities of the player like move, jump or receive damage, in order to allow to move actions perform their actual work with the correct conditions.With the previous example, when player jump and is hit, player can't move but the jump state will continuous to calculate the falling.
+
+  

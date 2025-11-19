@@ -81,6 +81,8 @@ Controls the initialize correct order.
 Interface ICoreDependent to initialize objects in scene, after bootstrapper finish.
   It would be better to only initialize from instantiation from bootstrapper and not objects already loaded in scene, but I found it interesting to try this hybrid solution and how it would works.
 
+
+
 ## Strategy pattern
 Provides specific pattern and workflow for each input device.
 For example: keyboard and gamepad using unity's input action system generate different information, but we need to normalize this data in order to generate a standard MoveCommand, so that the upper layers don't have to know the specific implementation.
@@ -93,6 +95,9 @@ Benefits of this design:
 - Better dependencies order.
 - Easy to expand.
 - Easy tests.
+
+## Modular Assemblies
+For each layer We create a indepent assembly, more easy to avoid circle reference and organize dependencies.
 
 ## Programming on DDD
 When We design focus on domain, we're more independent for Unity or any engine We use.
@@ -108,13 +113,13 @@ Rules for internal use in each type SM: this define the flow between their own s
 Rules for move and action states: when a new action state try to enter, it would verify if its a correct state to the actual move state.
 Player entity capabilities: the action states can disable the capabilities of the player like move, jump or receive damage, in order to allow to move actions perform their actual work with the correct conditions.With the previous example, when player jump and is hit, player can't move but the jump state will continuous to calculate the falling.
 
-<img width="551" height="435" alt="imagen" src="https://github.com/user-attachments/assets/48373f2b-7e42-4ced-9f53-20af29595b75" />
+<img width="616" height="513" alt="image" src="https://github.com/user-attachments/assets/f2c04cce-c622-4477-b079-762fee845cb6" />
 <img width="574" height="287" alt="imagen" src="https://github.com/user-attachments/assets/dab7213e-f86e-4e02-a1ad-7c15979a6451" />
 <img width="262" height="229" alt="imagen" src="https://github.com/user-attachments/assets/f45b3298-0362-4a75-bf7e-6d2f11aaa3b9" />
 <img width="253" height="289" alt="imagen" src="https://github.com/user-attachments/assets/d7b54c8b-7d6d-4669-86f4-feb30ae1c564" />
 <img width="257" height="344" alt="imagen" src="https://github.com/user-attachments/assets/ca9efc8f-7402-4fa5-a0ad-e3a59134f50b" />
 
-[ToDo] pendiente corregir el esquema de las move state machines
+
 
 # Improvements
 Add pending functions from the initial analysis: special attacks, combo system, change weapon, different type of damage and resistence, heal, move camera, different types of attacks.

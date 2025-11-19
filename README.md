@@ -1,5 +1,19 @@
 # Blasphemous 2 Input System
 
+# Instructions
+Movement: keyboard w/a/s/d, gamepad left joystick.
+Jump: keyboard space, gamepad A(xbox), X(playstation).
+Attack: keyboard F, gamepad X(xbox), square(playstation).
+Dash: keyboard R, gamepad Y(xbox), triangle(playstation).
+
+Player has two textbox that show the current state of move and action state machines, and changes color by the current move state.
+Collide with the purple box generate a hurt event and push back the player.
+Dash make player invulnerable to damage.
+Attack is a dummy action.
+When player receive ten hits, trigger the death state and a reboot is necessary.
+<img width="613" height="261" alt="imagen" src="https://github.com/user-attachments/assets/b4517826-f17a-4ee9-9360-b13bfb4270c2" />
+
+
 # Overview
 The goal with this project is to create an input system that could work and expand to match the Blasphemous 2 game 's design requirements.
 Making an arquitecture with the principles of good design like: open/closed design, interface and layers segretation, single responsability, dependency injection, design driven by domain, automatic test and anothers arquitecture pattern that fit the project
@@ -59,7 +73,7 @@ The view layer of the flow, show the player and current status.
 
 
 
-# Features ( las funciones especificas y como funcionan)
+# Features
 
 ## Bootstrapper
 Initialize all the components and dependencies injections.
@@ -73,6 +87,7 @@ For example: keyboard and gamepad using unity's input action system generate dif
 
 ## Layers design
 <img width="498" height="310" alt="imagen" src="https://github.com/user-attachments/assets/d44854e2-66f7-442f-8aad-70b620c469a6" />
+
 Benefits of this design:
 - Responsability separation.
 - Better dependencies order.
@@ -92,5 +107,20 @@ We use three elements to control this workflow:
 Rules for internal use in each type SM: this define the flow between their own states.
 Rules for move and action states: when a new action state try to enter, it would verify if its a correct state to the actual move state.
 Player entity capabilities: the action states can disable the capabilities of the player like move, jump or receive damage, in order to allow to move actions perform their actual work with the correct conditions.With the previous example, when player jump and is hit, player can't move but the jump state will continuous to calculate the falling.
+
+<img width="551" height="435" alt="imagen" src="https://github.com/user-attachments/assets/48373f2b-7e42-4ced-9f53-20af29595b75" />
+<img width="574" height="287" alt="imagen" src="https://github.com/user-attachments/assets/dab7213e-f86e-4e02-a1ad-7c15979a6451" />
+<img width="262" height="229" alt="imagen" src="https://github.com/user-attachments/assets/f45b3298-0362-4a75-bf7e-6d2f11aaa3b9" />
+<img width="253" height="289" alt="imagen" src="https://github.com/user-attachments/assets/d7b54c8b-7d6d-4669-86f4-feb30ae1c564" />
+<img width="257" height="344" alt="imagen" src="https://github.com/user-attachments/assets/ca9efc8f-7402-4fa5-a0ad-e3a59134f50b" />
+
+[ToDo] pendiente corregir el esquema de las move state machines
+
+# Improvements
+Add pending functions from the initial analysis: special attacks, combo system, change weapon, different type of damage and resistence, heal, move camera, different types of attacks.
+
+
+
+
 
   

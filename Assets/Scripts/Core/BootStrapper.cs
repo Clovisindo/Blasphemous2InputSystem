@@ -9,6 +9,11 @@ namespace Game.Core
         public PlayerInputActions inputActionsAsset;
         public static IContainer Container { get; private set; }
 
+        public static void InitializeForTests()
+        {
+            Container = new SimpleContainer();
+        }
+
         void Awake()
         {
             Debug.Log("[Bootstrapper] Iniciando núcleo del juego...");

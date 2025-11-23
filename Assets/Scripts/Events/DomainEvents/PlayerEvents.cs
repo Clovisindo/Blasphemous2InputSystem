@@ -71,11 +71,11 @@ namespace Game.Events.PlayerEvents
         public readonly struct PlayerMovement : IDomainEvent
         {
             public readonly Guid PlayerId;
-            public readonly Vector2 Direction;
-            public PlayerMovement(Guid id, Vector2 dir)
+            public readonly Vector2 Position;
+            public PlayerMovement(Guid id, Vector2 pos)
             {
                 PlayerId = id;
-                Direction = dir;
+                Position = pos;
             }
         }
 

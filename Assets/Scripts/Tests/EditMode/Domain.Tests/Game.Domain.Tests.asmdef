@@ -5,7 +5,8 @@
         "Game.Events",
         "Game.Input",
         "Game.Settings",
-        "Game.Utils"
+        "Game.Utils",
+        "Game.Domain"
     ],
     "includePlatforms": [
         "Editor"

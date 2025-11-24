@@ -5,7 +5,7 @@ using UnityEngine.InputSystem.LowLevel;
 
 namespace Game.Input
 {
-    public class InputDeviceWatcher : IDisposable
+    public class InputDeviceWatcher : IDisposable, IInputDeviceWatcher
     {
         /// <summary>
         /// Aviso por evento a InputAdapter del cambio de dispositivo
@@ -23,7 +23,7 @@ namespace Game.Input
 
             InputDeviceType newType = DetectDeviceType(device);
             if (newType == InputDeviceType.Unknown) return;
-            
+
             if (newType != _currentType)
             {
                 _currentType = newType;

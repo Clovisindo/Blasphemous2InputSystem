@@ -17,25 +17,22 @@ namespace Game.Input
         readonly Queue<InputCommand> _queue = new();
         IInputStrategy _strategy;
         PlayerInputActions _actionsAsset;
-        private readonly IInputStrategy _keyboardStrategy;
-        private readonly IInputStrategy _gamepadStrategy;
+        readonly IInputStrategy _keyboardStrategy;
+        readonly IInputStrategy _gamepadStrategy;
         /// <summary>
         /// solo bandera en evento cambiar dispositivo
         /// </summary>
-        private IInputStrategy _currentStrategy;
-        private readonly InputDeviceWatcher _watcher;
+        readonly IInputDeviceWatcher _watcher;
 
         public InputDeviceType CurrentDeviceType { get; private set; }
 
-        public InputAdapter(IInputStrategy keyboardStrategy, IInputStrategy gamepadStrategy)
+        public InputAdapter(IInputStrategy keyboardStrategy, IInputStrategy gamepadStrategy, IInputDeviceWatcher inputDeviceWatcher = null)
         {
             _keyboardStrategy = keyboardStrategy;
             _gamepadStrategy = gamepadStrategy;
-
-            _currentStrategy = _keyboardStrategy;
             CurrentDeviceType = InputDeviceType.KeyboardMouse;
 
-            _watcher = new InputDeviceWatcher();
+            _watcher = inputDeviceWatcher ?? new InputDeviceWatcher();
             _watcher.OnDeviceChanged += OnDeviceChanged;
         }
 
@@ -82,6 +79,7 @@ namespace Game.Input
         {
             _strategy?.ShutDown();
             _queue.Clear();
+            _watcher.OnDeviceChanged -= OnDeviceChanged;
             _watcher.Dispose();
         }
 
@@ -93,13 +91,10 @@ namespace Game.Input
                 InputDeviceType.KeyboardMouse => _keyboardStrategy,
                 _ => _keyboardStrategy
             };
+            if (_strategy == newStrategy) return;
 
-            if (_currentStrategy == newStrategy) return;
-
-            _currentStrategy = newStrategy;
             SetStrategy(newStrategy);
             CurrentDeviceType = newType;
         }
-
     }
 }

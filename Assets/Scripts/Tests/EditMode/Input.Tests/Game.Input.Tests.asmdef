@@ -2,7 +2,8 @@
     "name": "Game.Input.Tests",
     "rootNamespace": "",
     "references": [
-        "Game.Utils"
+        "Game.Utils",
+        "Game.Input"
     ],
     "includePlatforms": [
         "Editor"

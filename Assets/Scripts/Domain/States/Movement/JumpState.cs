@@ -14,13 +14,13 @@ namespace Game.Domain.StateMachine
         readonly PlayerEntity _playerEntity;
         readonly IEventBus _eventBus;
         Vector2 _initialDir;
-        readonly InputBuffer _inputBuffer;
+        readonly IInputBuffer _inputBuffer;
         InputCommand _bufferedCommand;
         public MovementStateType StateType => MovementStateType.Jumping;
 
         bool _isFalling;
 
-        public JumpState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, InputBuffer inputBuffer, IEventBus eventBus)
+        public JumpState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IInputBuffer inputBuffer, IEventBus eventBus)
         {
             _stateMachine = stateMachine;
             _playerEntity = playerEntity;

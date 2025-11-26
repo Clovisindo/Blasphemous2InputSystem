@@ -5,6 +5,7 @@
         "Game.Domain",
         "Game.Events",
         "Game.Input",
+        "Game.Services",
         "Game.Utils"
     ],
     "includePlatforms": [

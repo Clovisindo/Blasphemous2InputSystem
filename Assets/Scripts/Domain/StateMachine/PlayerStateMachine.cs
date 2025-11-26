@@ -5,12 +5,12 @@ using Game.Input.Commands;
 
 namespace Game.Domain.StateMachine
 {
-    public class PlayerStateMachine
+    public class PlayerStateMachine : IPlayerStateMachine
     {
         public IMovementStateMachine Movement { get; }
         public IActionStateMachine Action { get; }
 
-        public PlayerStateMachine(PlayerEntity playerEntity, InputBuffer inputbuffer,IEventBus eventBus)
+        public PlayerStateMachine(PlayerEntity playerEntity, InputBuffer inputbuffer, IEventBus eventBus)
         {
             Movement = new MovementStateMachine(playerEntity, inputbuffer, eventBus);
             Action = new ActionStateMachine(playerEntity, eventBus);

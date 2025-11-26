@@ -6,7 +6,7 @@ using static Utilities;
 namespace Game.Input
 {
     public enum ComboType { None, LightLightHeavy }
-    public class InputBuffer
+    public class InputBuffer : IInputBuffer
     {
         readonly int _maxSize;
         readonly float _windowTime;
@@ -21,13 +21,13 @@ namespace Game.Input
         public void AddCommand(InputCommand command)
         {
             _buffer.AddLast(command);
-            while(_buffer.Count > _maxSize) _buffer.RemoveFirst();
+            while (_buffer.Count > _maxSize) _buffer.RemoveFirst();
             Prune();
         }
         void Prune()
         {
             var cutoff = UnityEngine.Time.unscaledDeltaTime - _windowTime;
-            while(_buffer.First != null && _buffer.First.Value.Timestamp < cutoff)
+            while (_buffer.First != null && _buffer.First.Value.Timestamp < cutoff)
                 _buffer.RemoveFirst();
         }
 

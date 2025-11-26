@@ -12,13 +12,13 @@ namespace Game.Services.Application
 {
     public class PlayerApplicationService : IPlayerApplicationService
     {
-        readonly PlayerStateMachine _stateMachines;
-        readonly PlayerDomainService _playerDomainService;
+        readonly IPlayerStateMachine _stateMachines;
+        readonly IPlayerDomainService _playerDomainService;
         readonly PlayerEntity _playerEntity;
-        readonly InputBuffer _inputBuffer;
+        readonly IInputBuffer _inputBuffer;
         readonly IEventBus _eventBus;
 
-        public PlayerApplicationService(PlayerStateMachine stateMachines, PlayerDomainService playerDomainService, InputBuffer buffer, PlayerEntity playerEntity, IEventBus bus)
+        public PlayerApplicationService(IPlayerStateMachine stateMachines, IPlayerDomainService playerDomainService, IInputBuffer buffer, PlayerEntity playerEntity, IEventBus bus)
         {
             _stateMachines = stateMachines;
             _playerDomainService = playerDomainService;
@@ -30,8 +30,6 @@ namespace Game.Services.Application
             _eventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
             _eventBus.Subscribe<MoveStateEndedEvent>(OnMoveStateEndEvent);
         }
-
-        
 
         public void Dispose()
         {
@@ -120,7 +118,7 @@ namespace Game.Services.Application
 
             if (_playerEntity.DamageController.isInvulnerable)//comprobamos invulnerable, escudos, fuego amigo etc
             {
-                //_eventBus.Publish(new playerDamageIgnored());
+                _eventBus.Publish(new PlayerDamageIgnored());
                 return;
             }
             var currentMoveState = _stateMachines.Movement.CurrentStateType;

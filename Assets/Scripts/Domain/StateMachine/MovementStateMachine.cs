@@ -18,7 +18,7 @@ namespace Game.Domain.StateMachine
         IMovementState _current;
         public MovementStateType CurrentStateType => _current.StateType;
 
-        public MovementStateMachine(PlayerEntity playerEntity, InputBuffer inputBuffer, IEventBus eventBus)
+        public MovementStateMachine(PlayerEntity playerEntity, IInputBuffer inputBuffer, IEventBus eventBus)
         {
             _playerEntity = playerEntity;
             _eventBus = eventBus;

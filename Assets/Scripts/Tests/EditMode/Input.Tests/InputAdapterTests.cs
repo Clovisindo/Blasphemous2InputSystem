@@ -117,7 +117,7 @@ public class InputAdapterTests
         _adapter.SetStrategy(_keyboardStrategy);
 
         _adapter.ShutDown();
-        _deviceWatcher.OnDeviceChanged += Raise.Event<Action<InputDeviceType>>(InputDeviceType.Gamepad);
+        _deviceWatcher.OnDeviceChanged += Raise.Event<Action<InputDeviceType>>(InputDeviceType.Gamepad);//Comprobamos que no se detecta nada en el watcher
 
         _keyboardStrategy.Received(1).ShutDown();
         Assert.IsFalse(_adapter.TryDequeue(out _));

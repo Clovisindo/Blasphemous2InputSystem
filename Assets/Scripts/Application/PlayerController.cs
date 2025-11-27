@@ -12,12 +12,6 @@ namespace Game.Application
         IInputService _inputService;
         IPlayerApplicationService _playerApp;
 
-        public void Construct(IInputService input, IPlayerApplicationService app)
-        {
-            _inputService = input;
-            _playerApp = app;
-        }
-
         private void Awake()
         {
             _inputService ??= Bootstrapper.Container.Resolve<IInputService>();

@@ -6,7 +6,6 @@ using Game.Services.Application;
 using NSubstitute;
 using NUnit.Framework;
 using System.Collections;
-using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.TestTools;
 
@@ -21,16 +20,14 @@ public class PlayerControllerTests : MonoBehaviour
     [SetUp]
     public void Setup()
     {
-        Bootstrapper.InitializeForTests();//ToDo: arreglar como se inicializan las cosas con bootstraper
+        Bootstrapper.InitializeForTests();//No queremos arrancar el bootstrapper completo, lo configuramos para cada test
+        _inputService = Substitute.For<IInputService>();
+        _playerApplicationService = Substitute.For<IPlayerApplicationService>();
         Bootstrapper.Container.RegisterSingleton<IInputService>(_inputService);
         Bootstrapper.Container.RegisterSingleton<IPlayerApplicationService>(_playerApplicationService);
 
         var go = new GameObject("PlayerControllerTestObj");
-        _inputService = Substitute.For<IInputService>();
-        _playerApplicationService = Substitute.For<IPlayerApplicationService>();
         _controller = go.AddComponent<PlayerController>();
-        _controller.Construct(_inputService, _playerApplicationService);
-
         _controller.enabled = false;//no queremos que ejecute update
     }
 

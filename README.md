@@ -54,6 +54,7 @@ Runs two state machines: move and action.
 Process each command in the state machine that runs that type of command.
 Executes current state machines Update() methods.
 Check transition rules for the move and action state machines.
+Some state can bufer specific command to make a smooth transition between states, for example jump state bufered jump command some frames before ending.
 Read inputBuffer to check combos ( read but don't have any combo implemented yet).
 Implement several events to be called from the different states: player receive attack, when player takes damage or die,etc.
 Some of this logic is separated in another service "Player Domain Service" for better layer design.
@@ -123,6 +124,77 @@ Player entity capabilities: the action states can disable the capabilities of th
 
 # Improvements
 Add pending functions from the initial analysis: special attacks, combo system, change weapon, different type of damage and resistence, heal, move camera, different types of attacks.
+
+
+## New commands and input actions
+
+### Interact
+Feature: Player can make special actions with specific objects of the level and trigger events, dialogues,etc.
+Design and implementation: 
+- Create new inputCommand and configure the new action in unity input action system with a specific input.
+- PlayerAppService consume this command from the queue and invoke a new type interaction event.
+- The object that would receive the interaction, listen on the event bus to receive this call, and initiate its internal event.
+- With this base, would be a good option to create a new service that works with elements like UI and dialogue to work correctly with this events, and the interactive object just call the correct methods of this new system.
+- Also this new appService should filter and select priority in the case of several objects near the player.
+
+### Wall grab
+Feature: Player can approach specific zones of a wall where They can grab a fix their position.
+In this state player could only jump and attack.
+Design and implementation: 
+- Create new inputCommand and configure the new action in unity input action system with a specific input.This command have the info of the input: pressed or released.
+- Create a new domain service to detect a valid wall to grab.
+- PlayerAppService consume this command from the queue, verify if has a valid wall to grab and call move state machine to change for a new wall grab state.
+- Internally wall grab state will cancel the falling and movement, and will end this state when a jump command is processed or the input is released.
+- Also should be necessary to separate jump state in two and create falling state, in the case when in wall grab player release the action button and start falling again.
+- Update the move+action transition rules.
+
+### Healing
+Feature: player could heal with a limited amount of uses, with a specific input and a fixed heal value.
+Design and implementation:
+- Create the following properties on player entity: max heal uses, actual heal uses, heal value.
+- Player can heal from the following idle state, and move but forcing transition to idle.
+- Create new inputCommand and configure the new action in unity input action system with a specific input.
+- PlayerAppService consume this command, verify player has heal uses and the transition rules and change action state machine to a new state Healing.
+- Should create new rules to define the move states that could transition to action heal state, but forcing change move state to idle, to stop player from moving.
+- Also implement the heal command in the bufered system in the correct states,example: in dash state we can bufered heal command  to make a smooth transition.
+- The new state do the following, calling to player domain:
+  - Add inmunity capability.
+  - Remove move capability.
+  - Initiate heal animation.
+  - Consume one use of healing.
+  - Update health value.
+  - End the state and transition to action idle and restore previous capability changes.
+
+### Change weapon
+Feature: Player has different weapons, and can change with a specific input.
+Design and implementation:
+- Create new class for Weapon with generic methods to all weapons, new classes for each specific weapon that inherits from weapon base class.
+- Create scriptable object for attacks with the following data: type attack, damage, type damage.
+- Create list of combo attacks for each weapons.
+- Create the following properties on player: list of available weapons, current equiped weapon.
+- Create new inputCommand change weapon and configure the new action in unity input action system with a specific input.
+- New action state Change Weapon.
+- PlayerAppService consume change weapon command and change the action state machine to this state.
+- Same work of rules and transitions like on heal feature, don't interfere on move because is an UI and domain event.
+- The new state do the following, calling to player domain:
+  - Initiate change weapon animation on UI.
+  - Call domain method to change weapon.
+  - Ends state and transition to action idle.
+
+### Prayers
+Feature: Special attack.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

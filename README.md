@@ -182,7 +182,24 @@ Design and implementation:
   - Ends state and transition to action idle.
 
 ### Prayers
-Feature: Special attack.
+Feature: Special attack with limit resource (fervor)**
+
+Design and implementation:
+- Create new inputCommand change weapon and configure the new action in unity input action system with a specific input.
+- As with weapon, create a base class prayer and specific implementations that inherits from base class.
+- Create the following properties on player: list of available prayers, current prayer equiped.
+- New action state prayer state.
+- PlayerAppService consume the prayer command and change action state machine.
+- The rules and transitions should be similar to attack rules.
+- Calling player domain, the new state flow would be :
+  - Initiate animation.
+  - Initiate temporal cast inmunity and remove move capability.
+  - When prayer finish, end the state a transition to action idle.***
+
+
+** This feature require more domain analysis of the current requeriments of the abilities that would be implement, like invoke game object that move and detect collisions and comunicate with the current systems.For now will only talk about how to implement in the actual architecture of app services, states machines and input system.
+
+*** The new state should end before the prayer ending, because some prayers persist on time while player can move, attack and use any another abilities.
 
 
 

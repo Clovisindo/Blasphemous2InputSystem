@@ -17,13 +17,13 @@ namespace Game.Domain.StateMachine
         private StateTimer _timer;
         private Vector2 _direction;
         const float DASH_DURATION = 2f;
-        readonly InputBuffer _inputBuffer;
+        readonly IInputBuffer _inputBuffer;
         InputCommand _bufferedCommand;
 
 
         public MovementStateType StateType => MovementStateType.Dash;
 
-        public DashState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, InputBuffer inputBuffer, IEventBus eventBus)
+        public DashState(PlayerEntity playerEntity, IMovementStateMachine stateMachine, IInputBuffer inputBuffer, IEventBus eventBus)
         {
             _stateMachine = stateMachine;
             _playerEntity = playerEntity;

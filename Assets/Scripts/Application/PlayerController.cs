@@ -14,19 +14,24 @@ namespace Game.Application
 
         private void Awake()
         {
-            _inputService = Bootstrapper.Container.Resolve<IInputService>();
-            _playerApp = Bootstrapper.Container.Resolve<IPlayerApplicationService>();
+            _inputService ??= Bootstrapper.Container.Resolve<IInputService>();
+            _playerApp ??= Bootstrapper.Container.Resolve<IPlayerApplicationService>();
         }
 
         private void Update()
         {
+            Tick(Time.deltaTime);
+        }
+
+        public void Tick(float dt)
+        {
             InputCommand command;
             while (_inputService.TryDequeue(out command))
             {
-                _playerApp.ProcessInputCommands(command, Time.deltaTime);
+                _playerApp.ProcessInputCommands(command, dt);
             }
 
-            _playerApp.Update(Time.deltaTime);
+            _playerApp.Update(dt);
         }
     }
 }

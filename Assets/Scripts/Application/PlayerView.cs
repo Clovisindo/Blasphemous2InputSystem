@@ -110,7 +110,7 @@ namespace Game.Application
         private void OnMoved(PlayerMovement evt)
         {
             if (evt.PlayerId != _playerId) return;
-            transform.position = evt.Direction;
+            transform.position = evt.Position;
             //aplicar direcion a la que se enfoca el personaje
             //_animator.SetFloat("Speed", evt.Direction.magnitude);
         }

@@ -27,6 +27,15 @@ namespace Game.Events.PlayerEvents
             public DamageIntentEvent(Guid targetPlayerId, int damage, float stun, Vector2 knockbackDir, GameObject source) =>
                 (TargetPlayerId, Damage, StunDuration, KnockbackDirection, Source) = (targetPlayerId, damage, stun, knockbackDir, source);
         }
+        public readonly struct PlayerDamageIgnored : IDomainEvent
+        {
+            public readonly Guid PlayerId;
+
+            public PlayerDamageIgnored(Guid playerId)
+            {
+                PlayerId = playerId;
+            }
+        }
 
         public readonly struct MoveStateEndedEvent : IApplicationEvent
         {
@@ -71,11 +80,11 @@ namespace Game.Events.PlayerEvents
         public readonly struct PlayerMovement : IDomainEvent
         {
             public readonly Guid PlayerId;
-            public readonly Vector2 Direction;
-            public PlayerMovement(Guid id, Vector2 dir)
+            public readonly Vector2 Position;
+            public PlayerMovement(Guid id, Vector2 pos)
             {
                 PlayerId = id;
-                Direction = dir;
+                Position = pos;
             }
         }
 

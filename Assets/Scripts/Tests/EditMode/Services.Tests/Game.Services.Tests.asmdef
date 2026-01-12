@@ -1,17 +1,22 @@
 {
-    "name": "Game.Tests.EditMode",
+    "name": "Game.Services.Tests",
     "rootNamespace": "",
     "references": [
-        "GUID:eae89194f93d0bf408c6d1c647afde06",
-        "GUID:465a2375429c6894bb807c572d1392ab"
+        "Game.Domain",
+        "Game.Events",
+        "Game.Input",
+        "Game.Services",
+        "Game.Utils"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "nunit.framework.dll",
-        "NSubstitute.dll"
+        "NSubstitute.dll",
+        "nunit.framework.dll"
     ],
     "autoReferenced": false,
     "defineConstraints": [

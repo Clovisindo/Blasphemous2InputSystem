@@ -1,0 +1,27 @@
+{
+    "name": "Game.Domain.Tests",
+    "rootNamespace": "",
+    "references": [
+        "Game.Events",
+        "Game.Input",
+        "Game.Settings",
+        "Game.Utils",
+        "Game.Domain"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "NSubstitute.dll",
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,29 @@
+{
+    "name": "Game.Application.Tests",
+    "rootNamespace": "",
+    "references": [
+        "Game.Core",
+        "Game.Domain",
+        "Game.Events",
+        "Game.Input",
+        "Game.Services",
+        "Game.Utils",
+        "Game.Application",
+        "UnityEditor.TestRunner",
+        "UnityEngine.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "NSubstitute.dll",
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

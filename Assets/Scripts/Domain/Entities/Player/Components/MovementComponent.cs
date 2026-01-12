@@ -32,6 +32,17 @@ namespace Game.Domain.Entities.Player
             _eventBus.Publish(new PlayerMovement(_player.Id, _player.Position));
         }
 
+        //ToDo: llevarse estos metodos y publicar eventos al PlayerDomainService
+        public void Jump()
+        {
+            if (!_player.Capabilities.Has(MoveCapability.Move))
+                return;
+
+            _player.Capabilities.Remove(MoveCapability.IsGrounded);
+            VerticalVelocity = _player.Stats.JumpForce;
+            _eventBus.Publish(new PlayerJumpStartedEvent(_player.Id, _player.Stats.JumpForce));
+        }
+
         public void ApplyGravity(float gravity, float deltaTime)
         {
             VerticalVelocity = gravity == 0 ? 0 : VerticalVelocity - gravity * deltaTime;
@@ -46,17 +57,6 @@ namespace Game.Domain.Entities.Player
             // Simplificación: leer del controller o de colisiones por evento?
             if (_player.Position.y <= 0)
                 _player.Capabilities.Add(MoveCapability.IsGrounded);
-        }
-
-        //ToDo: llevarse estos metodos y publicar eventos al PlayerDomainService
-        public void Jump()
-        {
-            if (!_player.Capabilities.Has(MoveCapability.Move))
-                return;
-
-            _player.Capabilities.Remove(MoveCapability.IsGrounded);
-            VerticalVelocity = _player.Stats.JumpForce;
-            _eventBus.Publish(new PlayerJumpStartedEvent(_player.Id, _player.Stats.JumpForce));
         }
 
         public void Dash(Vector2 direction, float dashSpeed, float deltaTime)
